@@ -81,6 +81,7 @@ footer { color:var(--muted); font-size:13px; max-width:760px; margin:0 auto; pad
 <main>
   <section id="questions">
     <div id="count" class="statement count"></div>
+    <div id="task" class="statement count"></div>
     <p id="answer-prompt" class="answer-prompt"></p>
     <ol id="statements"></ol>
     <section id="contact" class="statement contact">
@@ -96,7 +97,7 @@ footer { color:var(--muted); font-size:13px; max-width:760px; margin:0 auto; pad
   <section id="result" hidden></section>
 </main>
 <footer>Beacon IT Advisory · This page saves your answers, your result and your contact details so Beacon can follow up. It asks for no patient information.</footer>
-<script>window.FREE_TOOL_DATA = {"bank":{"domains":[{"key":"governance","name":"Governance and risk","maps_to":["D7"],"benchmark":"mgma_ai_policy"},{"key":"workflow","name":"Workflow fit","maps_to":["D1","D2","D3"],"benchmark":"mgma_role_redesign"},{"key":"data","name":"Data and integration","maps_to":["D4","D5"],"benchmark":null},{"key":"people","name":"People and change","maps_to":["D6"],"benchmark":null},{"key":"buyer","name":"Proof of value","maps_to":["D8"],"benchmark":"mgma_work_shift"}],"questions":[{"id":"GOV-01","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":4,"text":"Your written AI use policy covers each tool.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-05","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":1,"text":"Each AI vendor signed a business associate agreement (BAA) with your practice.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-02","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":2,"text":"One named person approved each tool before staff used it.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-03","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":2,"text":"Each tool is on a list you keep of the AI tools staff use, including free ones.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-04","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":2,"text":"Staff check each tool's output before it goes in the chart or to a payer.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-06","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"You tell patients when an AI tool records the visit or drafts their messages.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"WRK-01","domain":"workflow","maps_to":"D1","anchor":"L3","step":"free","version":3,"text":"You can name the workflow each tool is meant to fix.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"WRK-02","domain":"workflow","maps_to":"D2","anchor":"L4","step":"free","version":3,"text":"You measured each workflow before its tool started, so you have a baseline to compare.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"WRK-03","domain":"workflow","maps_to":"D3","anchor":"L4","step":"free","version":2,"text":"You changed a staff role around each tool.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"DAT-01","domain":"data","maps_to":"D4","anchor":"L3","step":"free","version":3,"text":"Each tool reads from your EHR without staff copying data by hand.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"DAT-02","domain":"data","maps_to":"D5","anchor":"L4","step":"free","version":3,"text":"You can get a report of what each tool did last month.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"DAT-03","domain":"data","maps_to":"D5","anchor":"L3","step":"free","version":2,"text":"You can see who uses each tool and how often.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"PPL-01","domain":"people","maps_to":"D6","anchor":"L3","step":"free","version":3,"text":"More than half of the staff each tool was bought for use it each week.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"PPL-04","domain":"people","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"You checked each AI tool that affects patient care for bias by race, sex, age or disability.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"PPL-03","domain":"people","maps_to":"D6","anchor":"L3","step":"free","version":2,"text":"The clinicians who use each tool had a say in choosing it.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"BUY-01","domain":"buyer","maps_to":"D8","anchor":"L3","step":"free","version":3,"text":"You know the full yearly cost of each tool, with add-ons and staff time.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date."},{"id":"BUY-02","domain":"buyer","maps_to":"D8","anchor":"L4","step":"free","version":3,"text":"You compared each tool's cost with a measured return in dollars.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date."},{"id":"BUY-03","domain":"buyer","maps_to":"D8","anchor":"L4","step":"free","version":2,"text":"You set a date to decide whether to keep or stop each tool.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date."}]},"scale":{"answers":{"all":100,"some":50,"none":0,"notsure":0},"mapping_rule":"Domain percent = average of All 100, Some 50, None 0, Not sure 0. Rubric level: 0% = 1, 1 to 49% = 2, 50 to 99% = 3, 100% = 4. Level 5 needs evidence, so only the ScoreCard can give it. A domain with half or more Not sure answers is Unknown and stays out of the average.","level_bands":[{"min":100,"level":4},{"min":50,"level":3},{"min":1,"level":2},{"min":0,"level":1}],"levels":{"1":"Critical Gap","2":"Significant Gap","3":"Functional Baseline","4":"Strong Foundation"},"unknown_label":"Unknown: find out first","tie_order":["governance","buyer","workflow","data","people"],"tiers":[{"min":3.5,"name":"Well-Positioned","explain":"Your practice has the basics in place to run its AI tools well.","decision":"Keep your tools. Measure them again in 90 days before you add another one."},{"min":2.5,"name":"Functional Baseline","explain":"Your practice has some basics in place, and some gaps that limit its AI tools.","decision":"Fix the 2 lowest domains in the next 90 days. Then decide which tools to keep or stop."},{"min":1.5,"name":"Significant Gaps","explain":"Your practice has gaps that put the value of its AI tools at risk.","decision":"Hold new AI purchases. Close the 2 lowest gaps first."},{"min":0,"name":"Critical State","explain":"Your practice is missing the basics that keep its AI tools safe and worth their cost.","decision":"Hold new AI purchases. Close the 2 lowest gaps first."}],"unknown_tier":{"name":"Unknown","explain":"You answered Not sure to half or more of the statements in every domain, so the check cannot score your practice yet.","decision":"Find out the answers in the list below. Then take the check again."},"review_first":{"question":"GOV-04","when":["none","notsure"],"domain":"First, staff review","next_step":"Make staff check AI output before it goes in the chart or to a payer. Put this rule in your AI use policy."},"benchmarks":{"mgma_ai_in_visits":{"line":"83% of practice leaders who answered an MGMA Stat poll say their practice uses AI in some patient visits, up from 71% a year earlier.","source":"MGMA Stat poll","date":"Aug 4, 2026","n":189,"url":"https://www.mgma.com/mgma-stat/ai-use-expands-leaders-shift-attention-to-measurement"},"mgma_productivity":{"line":"46% of practice leaders who answered an MGMA Stat poll say AI made their providers more productive. 14% are not sure, mostly because they cannot measure it.","source":"MGMA Stat poll","date":"May 12, 2026","n":257,"url":"https://mgma.com/mgma-stat/are-ai-tools-making-clinicians-more-productive-its-complicated"},"mgma_ai_policy":{"line":"20% of practice leaders who answered an MGMA Stat poll have AI governance or a formal AI policy. 22% are building one. 56% have none.","source":"MGMA Stat poll","date":"Jan 20, 2026","n":328,"url":"https://www.mgma.com/mgma-stat/ai-governance-in-medical-group-practices","place":{"question":"GOV-01","by_answer":{"all":"Your answer puts you with the 20% that have a formal AI policy.","some":"Your answer puts you near the 22% that are still building one.","none":"Your answer puts you with the 56% that have none.","notsure":"Find out whether your policy covers each tool to see where you stand."}}},"mgma_role_redesign":{"line":"68% of practice leaders who answered an MGMA Stat poll have not redesigned a role or changed staffing with AI in the past year.","source":"MGMA Stat poll","date":"Jun 2, 2026","n":260,"url":"https://mgma.com/mgma-stat/ai-slowly-redesigning-work-rather-than-replacing-workers","place":{"question":"WRK-03","by_answer":{"all":"Your answer puts you outside the 68% that have not.","some":"Your answer puts you outside the 68% that have not.","none":"Your answer puts you with the 68% that have not.","notsure":"Find out whether you changed a staff role around each tool to see where you stand."}}},"mgma_work_shift":{"line":"When practice leaders who answered an MGMA Stat poll describe what AI did to staff work, 37% say it shifted work to other tasks and 29% say it reduced work.","source":"MGMA Stat poll","date":"Aug 4, 2026","n":189,"url":"https://www.mgma.com/mgma-stat/ai-use-expands-leaders-shift-attention-to-measurement","place":{"question":"BUY-02","by_answer":{"all":"You compared each tool's cost with a measured return, so you can say which group your practice is in.","some":"You have not compared every tool's cost with a measured return, so you cannot yet say which group your practice is in.","none":"You have not compared any tool's cost with a measured return, so you cannot yet say which group your practice is in.","notsure":"Find out whether anyone compared each tool's cost with a measured return."}}}},"neutral_line":"We sell no AI tools and take no vendor fees.","next_step_offer":"The ScoreCard scores all 8 detailed domains against public MGMA survey figures. $600, credited in full to the Assessment."},"setup":{"id":"free-practice-check","name":"Free Practice Check","purpose":"The check measures whether a practice has the controls to run its AI tools safely and to prove they pay off.","question":"Are the AI tools you pay for paying off?","intro":"Count the AI tools your practice uses. Then answer 18 statements about all of them. It takes about 7 minutes.","answer_prompt":"For each statement, answer for the AI tools your practice uses.","choices":[["all","All"],["some","Some"],["none","None"],["notsure","Not sure"]],"count":{"text":"How many AI tools does your practice use? Include free tools staff use on their own.","options":[{"value":"none","label":"None"},{"value":"1","label":"1","headline":"Your AI tool"},{"value":"2-3","label":"2 to 3","headline":"Your 2 to 3 AI tools"},{"value":"4+","label":"4 or more","headline":"Your 4 or more AI tools"},{"value":"notsure","label":"Not sure","headline":"Your AI tools"}],"none_message":"This check is for practices that already use AI tools. Come back when your practice starts one.","notsure_find_out":"List every AI tool your staff use, including free ones."},"find_out_prefix":"Find out whether ","questions":["GOV-01","GOV-05","GOV-02","GOV-03","GOV-04","GOV-06","WRK-01","WRK-02","WRK-03","DAT-01","DAT-02","DAT-03","PPL-01","PPL-04","PPL-03","BUY-01","BUY-02","BUY-03"],"top_benchmarks":["mgma_ai_in_visits","mgma_productivity"],"hubspot":{"portal":"245756389","form":"12845976-c08a-4641-b497-8bf4c5875bd9"},"contact":{"heading":"Enter your details to see your result","fields":[["firstname","First name","given-name"],["lastname","Last name","family-name"],["company","Company name","organization"],["email","Email","email"]],"privacy":"Your details go to Beacon IT Advisory only. You get 1 email with your result. No list, no sharing.","error":"Your details did not save. Your result shows below. Please tell the person who sent you this link."},"subscribe":{"heading":"More from Shawn","line":"Shawn L. Self, PMP writes about putting AI to work in physician practices.","rows":[{"channel":"Substack","action":"Subscribe","url":"https://shawnlself.substack.com/subscribe","verb":"Read","title":"How to Know if Your AI Tool Actually Works","example":"https://shawnlself.substack.com/p/how-to-know-if-your-ai-tool-actually"},{"channel":"LinkedIn","action":"Follow","url":"https://www.linkedin.com/in/shawnlself","verb":"Read","title":"Govern Before You Adopt","example":"https://www.linkedin.com/feed/update/urn:li:activity:7477400617838227456/"},{"channel":"YouTube","action":"Subscribe","url":"https://www.youtube.com/@shawnlselfpmp?sub_confirmation=1","verb":"Watch","title":"Did the AI do that? How to tell if your AI tool really worked","example":"https://www.youtube.com/shorts/EiVNFQ68RQQ"}]}},"build":"2026-11-12 18:14"};</script>
+<script>window.FREE_TOOL_DATA = {"bank":{"domains":[{"key":"governance","name":"Governance and risk","maps_to":["D7"],"benchmark":"mgma_ai_policy"},{"key":"workflow","name":"Workflow fit","maps_to":["D1","D2","D3"],"benchmark":"mgma_role_redesign"},{"key":"data","name":"Data and integration","maps_to":["D4","D5"],"benchmark":null},{"key":"people","name":"People and change","maps_to":["D6"],"benchmark":null},{"key":"buyer","name":"Proof of value","maps_to":["D8"],"benchmark":"mgma_work_shift"},{"key":"oversight","name":"Project oversight","maps_to":["D7"],"benchmark":null}],"questions":[{"id":"GOV-01","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":4,"text":"Your written AI use policy covers each tool.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-05","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":1,"text":"Each AI vendor signed a business associate agreement (BAA) with your practice.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-02","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":2,"text":"One named person approved each tool before staff used it.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-03","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":2,"text":"Each tool is on a list you keep of the AI tools staff use, including free ones.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-04","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":2,"text":"Staff check each tool's output before it goes in the chart or to a payer.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-06","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"You tell patients when an AI tool records the visit or drafts their messages.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-07","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":1,"text":"You know which of your tools act on their own, such as booking visits, calling patients or sending claims, and which only draft for staff.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-08","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"Each tool that acts on its own has written limits on what it may do without a person's approval.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"WRK-01","domain":"workflow","maps_to":"D1","anchor":"L3","step":"free","version":3,"text":"You can name the workflow each tool is meant to fix.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"WRK-02","domain":"workflow","maps_to":"D2","anchor":"L4","step":"free","version":3,"text":"You measured each workflow before its tool started, so you have a baseline to compare.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"WRK-03","domain":"workflow","maps_to":"D3","anchor":"L4","step":"free","version":2,"text":"You changed a staff role around each tool.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"DAT-01","domain":"data","maps_to":"D4","anchor":"L3","step":"free","version":3,"text":"Each tool reads from your EHR without staff copying data by hand.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"DAT-02","domain":"data","maps_to":"D5","anchor":"L4","step":"free","version":3,"text":"You can get a report of what each tool did last month.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"DAT-03","domain":"data","maps_to":"D5","anchor":"L3","step":"free","version":2,"text":"You can see who uses each tool and how often.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"PPL-01","domain":"people","maps_to":"D6","anchor":"L3","step":"free","version":3,"text":"More than half of the staff each tool was bought for use it each week.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"PPL-04","domain":"people","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"You checked each AI tool that affects patient care for bias by race, sex, age or disability.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"PPL-03","domain":"people","maps_to":"D6","anchor":"L3","step":"free","version":2,"text":"The clinicians who use each tool had a say in choosing it.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"BUY-01","domain":"buyer","maps_to":"D8","anchor":"L3","step":"free","version":3,"text":"You know the full yearly cost of each tool, with add-ons and staff time.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date. Put each tool on one project list with an owner and a go, hold or stop date."},{"id":"BUY-02","domain":"buyer","maps_to":"D8","anchor":"L4","step":"free","version":3,"text":"You compared each tool's cost with a measured return in dollars.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date. Put each tool on one project list with an owner and a go, hold or stop date."},{"id":"BUY-03","domain":"buyer","maps_to":"D8","anchor":"L4","step":"free","version":2,"text":"You set a date to decide whether to keep or stop each tool.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date. Put each tool on one project list with an owner and a go, hold or stop date."},{"id":"PMO-01","domain":"oversight","maps_to":"D7","anchor":"L3","step":"free","version":1,"text":"You keep one list of every AI and IT project open now, with 1 owner for each.","next_step":"List every open AI and IT project, name 1 owner for each, and review the list with your leaders once a month."},{"id":"PMO-02","domain":"oversight","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"One person or group decides which new tools and projects start, hold or stop.","next_step":"List every open AI and IT project, name 1 owner for each, and review the list with your leaders once a month."},{"id":"PMO-03","domain":"oversight","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"Your leaders review each open project's status at a set time each month.","next_step":"List every open AI and IT project, name 1 owner for each, and review the list with your leaders once a month."}]},"scale":{"answers":{"all":100,"some":50,"none":0,"notsure":0},"mapping_rule":"Domain percent = average of All 100, Some 50, None 0, Not sure 0. Rubric level: 0% = 1, 1 to 49% = 2, 50 to 99% = 3, 100% = 4. Level 5 needs evidence, so only the ScoreCard can give it. A domain with half or more Not sure answers is Unknown and stays out of the average.","level_bands":[{"min":100,"level":4},{"min":50,"level":3},{"min":1,"level":2},{"min":0,"level":1}],"levels":{"1":"Critical Gap","2":"Significant Gap","3":"Functional Baseline","4":"Strong Foundation"},"unknown_label":"Unknown: find out first","tie_order":["governance","buyer","oversight","workflow","data","people"],"tiers":[{"min":3.5,"name":"Well-Positioned","explain":"Your practice has the basics in place to run its AI tools well.","decision":"Keep your tools. Pick the next task to hand to software, and measure it first."},{"min":2.5,"name":"Functional Baseline","explain":"Your practice has some basics in place, and some gaps that limit its AI tools.","decision":"Fix the 2 lowest domains in the next 90 days. Then decide which tools to keep or stop."},{"min":1.5,"name":"Significant Gaps","explain":"Your practice has gaps that put the value of its AI tools at risk.","decision":"Hold new AI purchases. Close the 2 lowest gaps first."},{"min":0,"name":"Critical State","explain":"Your practice is missing the basics that keep its AI tools safe and worth their cost.","decision":"Hold new AI purchases. Close the 2 lowest gaps first."}],"unknown_tier":{"name":"Unknown","explain":"You answered Not sure to half or more of the statements in every domain, so the check cannot score your practice yet.","decision":"Find out the answers in the list below. Then take the check again."},"review_first":{"question":"GOV-04","when":["none","notsure"],"domain":"First, staff review","next_step":"Make staff check AI output before it goes in the chart or to a payer. Put this rule in your AI use policy."},"benchmarks":{"mgma_ai_in_visits":{"line":"83% of practice leaders who answered an MGMA Stat poll say their practice uses AI in some patient visits, up from 71% a year earlier.","source":"MGMA Stat poll","date":"Aug 4, 2026","n":189,"url":"https://www.mgma.com/mgma-stat/ai-use-expands-leaders-shift-attention-to-measurement"},"mgma_productivity":{"line":"46% of practice leaders who answered an MGMA Stat poll say AI made their providers more productive. 14% are not sure, mostly because they cannot measure it.","source":"MGMA Stat poll","date":"May 12, 2026","n":257,"url":"https://mgma.com/mgma-stat/are-ai-tools-making-clinicians-more-productive-its-complicated"},"mgma_ai_policy":{"line":"20% of practice leaders who answered an MGMA Stat poll have AI governance or a formal AI policy. 22% are building one. 56% have none.","source":"MGMA Stat poll","date":"Jan 20, 2026","n":328,"url":"https://www.mgma.com/mgma-stat/ai-governance-in-medical-group-practices","place":{"question":"GOV-01","by_answer":{"all":"Your answer puts you with the 20% that have a formal AI policy.","some":"Your answer puts you near the 22% that are still building one.","none":"Your answer puts you with the 56% that have none.","notsure":"Find out whether your policy covers each tool to see where you stand."}}},"mgma_role_redesign":{"line":"68% of practice leaders who answered an MGMA Stat poll have not redesigned a role or changed staffing with AI in the past year.","source":"MGMA Stat poll","date":"Jun 2, 2026","n":260,"url":"https://mgma.com/mgma-stat/ai-slowly-redesigning-work-rather-than-replacing-workers","place":{"question":"WRK-03","by_answer":{"all":"Your answer puts you outside the 68% that have not.","some":"Your answer puts you outside the 68% that have not.","none":"Your answer puts you with the 68% that have not.","notsure":"Find out whether you changed a staff role around each tool to see where you stand."}}},"mgma_work_shift":{"line":"When practice leaders who answered an MGMA Stat poll describe what AI did to staff work, 37% say it shifted work to other tasks and 29% say it reduced work.","source":"MGMA Stat poll","date":"Aug 4, 2026","n":189,"url":"https://www.mgma.com/mgma-stat/ai-use-expands-leaders-shift-attention-to-measurement","place":{"question":"BUY-02","by_answer":{"all":"You compared each tool's cost with a measured return, so you can say which group your practice is in.","some":"You have not compared every tool's cost with a measured return, so you cannot yet say which group your practice is in.","none":"You have not compared any tool's cost with a measured return, so you cannot yet say which group your practice is in.","notsure":"Find out whether anyone compared each tool's cost with a measured return."}}},"mgma_access_targets":{"line":"Practice leaders who answered an MGMA Stat poll named where they are turning to AI and automation to improve access: scheduling 31%, calls 27%, registration and eligibility 23%, prior authorization 16%.","source":"MGMA Stat poll","date":"Feb 10, 2026","n":177,"url":"https://www.mgma.com/mgma-stat/automatic-for-the-people-ai-for-front-office-access"}},"neutral_line":"We sell no AI products and take no vendor fees. We bill only for our time.","next_step_offer":"The ScoreCard scores all 8 detailed domains against public MGMA survey figures. $600, credited in full to the Assessment. The Assessment finds what to fix first. Common fixes are a project list and 90-day roadmap for your practice, or an AI assistant built for one task."},"setup":{"id":"free-practice-check","name":"Free Practice Check","purpose":"The check measures whether a practice has the controls to run its AI tools safely and to prove they pay off.","question":"Are the AI tools you pay for paying off?","intro":"Count the AI tools your practice uses and pick 1 task. Then answer 23 short statements. It takes about 9 minutes.","answer_prompt":"For each statement, answer for the AI tools your practice uses.","choices":[["all","All"],["some","Some"],["none","None"],["notsure","Not sure"]],"count":{"text":"How many AI tools does your practice use? Include free tools staff use on their own.","options":[{"value":"none","label":"None","headline":"Your practice"},{"value":"1","label":"1","headline":"Your AI tool"},{"value":"2-3","label":"2 to 3","headline":"Your 2 to 3 AI tools"},{"value":"4+","label":"4 or more","headline":"Your 4 or more AI tools"},{"value":"notsure","label":"Not sure","headline":"Your AI tools"}],"none_message":"Your practice uses no AI tools yet, so this short check covers 2 things: the first task to hand to software, and how your practice runs its projects.","notsure_find_out":"List every AI tool your staff use, including free ones."},"find_out_prefix":"Find out whether ","questions":["GOV-01","GOV-05","GOV-02","GOV-03","GOV-04","GOV-06","GOV-07","GOV-08","WRK-01","WRK-02","WRK-03","DAT-01","DAT-02","DAT-03","PPL-01","PPL-04","PPL-03","BUY-01","BUY-02","BUY-03","PMO-01","PMO-02","PMO-03"],"top_benchmarks":["mgma_ai_in_visits","mgma_productivity"],"hubspot":{"portal":"245756389","form":"12845976-c08a-4641-b497-8bf4c5875bd9"},"contact":{"heading":"Enter your details to see your result","fields":[["firstname","First name","given-name"],["lastname","Last name","family-name"],["company","Company name","organization"],["email","Email","email"]],"privacy":"Your details go to Beacon IT Advisory only. You get 1 email with your result. No list, no sharing.","error":"Your details did not save. Your result shows below. Please tell the person who sent you this link."},"subscribe":{"heading":"More from Shawn","line":"Shawn L. Self, PMP writes about putting AI to work in physician practices.","rows":[{"channel":"Substack","action":"Subscribe","url":"https://shawnlself.substack.com/subscribe","verb":"Read","title":"How to Know if Your AI Tool Actually Works","example":"https://shawnlself.substack.com/p/how-to-know-if-your-ai-tool-actually"},{"channel":"LinkedIn","action":"Follow","url":"https://www.linkedin.com/in/shawnlself","verb":"Read","title":"Govern Before You Adopt","example":"https://www.linkedin.com/feed/update/urn:li:activity:7477400617838227456/"},{"channel":"YouTube","action":"Subscribe","url":"https://www.youtube.com/@shawnlselfpmp?sub_confirmation=1","verb":"Watch","title":"Did the AI do that? How to tell if your AI tool really worked","example":"https://www.youtube.com/shorts/EiVNFQ68RQQ"}]},"none_questions":["PMO-01","PMO-02","PMO-03"],"task":{"text":"Which front-office task would you most like software to take off your staff?","heading":"First task to hand to software","benchmark":"mgma_access_targets","options":[{"value":"scheduling","label":"Scheduling","line":"You picked scheduling. The Assessment measures that workflow first."},{"value":"calls","label":"Phone calls","line":"You picked phone calls. The Assessment measures that workflow first."},{"value":"registration","label":"Registration and eligibility","line":"You picked registration and eligibility. The Assessment measures that workflow first."},{"value":"priorauth","label":"Prior authorization","line":"You picked prior authorization. The Assessment measures that workflow first."},{"value":"other","label":"Something else","line":"You picked another task. The Assessment measures that workflow first."},{"value":"nonenow","label":"None now","line":"You picked no task for now. The Assessment shows which task to hand to software first."}]}},"build":"2026-11-12 19:31"};</script>
 <script>// Free-tool scoring engine. Pure functions, no DOM. Shared by the page and the test script.
 // Spec: outputs/design_181_free-tool-engine_2026-11-04.md (vault), sections 1 and 2.
 var Engine = (function () {
@@ -106,8 +107,14 @@ var Engine = (function () {
     var count = answers.COUNT;
     var opt = setup.count.options.filter(function (o) { return o.value === count; })[0];
     if (!opt) throw new Error("Missing answer: COUNT");
-    if (count === "none") return { none: true, message: setup.count.none_message,
-                                   neutral: scale.neutral_line, offer: scale.next_step_offer };
+    var none = count === "none";
+    // "None" tools: short path, only the project oversight statements (ruling 84).
+    var active = none ? setup.none_questions : setup.questions;
+    var taskOpt = setup.task.options.filter(function (o) { return o.value === answers.TASK; })[0];
+    if (!taskOpt) throw new Error("Missing answer: TASK");
+    var tb = scale.benchmarks[setup.task.benchmark];
+    if (!tb) throw new Error("Unknown benchmark key: " + setup.task.benchmark);
+    var task = { heading: setup.task.heading, label: taskOpt.label, line: taskOpt.line, peer: tb };
     var byId = {};
     bank.questions.forEach(function (q) { byId[q.id] = q; });
     var domainInfo = {};
@@ -115,7 +122,7 @@ var Engine = (function () {
 
     // Domains in the order the setup lists their questions.
     var order = [], doms = {};
-    setup.questions.forEach(function (id) {
+    active.forEach(function (id) {
       var q = byId[id];
       if (!q) throw new Error("Unknown question id: " + id);
       if (!doms[q.domain]) {
@@ -160,7 +167,7 @@ var Engine = (function () {
     var rf = scale.review_first;
     if (rf.when.indexOf(answers[rf.question]) >= 0) plan.unshift({ domain: rf.domain, next_step: rf.next_step });
 
-    var findOut = setup.questions.filter(function (id) { return answers[id] === "notsure"; })
+    var findOut = active.filter(function (id) { return answers[id] === "notsure"; })
       .map(function (id) { return setup.find_out_prefix + lowerFirst(byId[id].text); });
     if (count === "notsure") findOut.unshift(setup.count.notsure_find_out);
 
@@ -175,7 +182,8 @@ var Engine = (function () {
       return scale.benchmarks[k];
     });
 
-    return { headline: opt.headline, neutral: scale.neutral_line, average: average, tier: tier,
+    return { none: none, message: none ? setup.count.none_message : null, questions: active, task: task,
+             headline: opt.headline, neutral: scale.neutral_line, average: average, tier: tier,
              domains: domains, plan: plan, findOut: findOut, peers: peers, top: top, offer: scale.next_step_offer };
   }
   // HubSpot form body: the 4 contact fields, the result ID and 1 text summary. No free text beyond the contact.
@@ -190,10 +198,11 @@ var Engine = (function () {
     if (!/^[a-z0-9]{6,}$/.test(resultId)) throw new Error("Bad result ID");
     var counts = setup.count.options.map(function (o) { return o.value; });
     if (counts.indexOf(answers.COUNT) < 0) throw new Error("Bad count answer");
-    var parts = ["time=" + meta.time, "build=" + meta.build, "count=" + answers.COUNT];
-    if (result.none) parts.push("tier=None");
-    else {
-      parts.push("answers=" + setup.questions.map(function (id) {
+    var tasks = setup.task.options.map(function (o) { return o.value; });
+    if (tasks.indexOf(answers.TASK) < 0) throw new Error("Bad task answer");
+    var parts = ["time=" + meta.time, "build=" + meta.build, "count=" + answers.COUNT, "task=" + answers.TASK];
+    {
+      parts.push("answers=" + result.questions.map(function (id) {
         if (!(answers[id] in scale.answers)) throw new Error("Bad answer: " + id);
         return id + ":" + answers[id];
       }).join(","));
@@ -201,7 +210,7 @@ var Engine = (function () {
         return d.name + ":" + (d.unknown ? "Unknown" : d.percent + "%:L" + d.level);
       }).join(","));
       parts.push("average=" + (result.average === null ? "none" : result.average.toFixed(1)));
-      parts.push("tier=" + result.tier.name);
+      parts.push("tier=" + (result.none ? "None" : result.tier.name));
     }
     var f = function (name, value) { return { objectTypeId: "0-1", name: name, value: String(value).trim() }; };
     return { fields: [f("firstname", contact.firstname), f("lastname", contact.lastname), f("company", contact.company),
@@ -275,12 +284,13 @@ if (typeof module !== "undefined") module.exports = Engine;
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((contact.email || "").trim());
   }
 
+  function active() { return answers.COUNT === "none" ? setup.none_questions : setup.questions; }
   function update() {
-    var done = setup.questions.filter(function (id) { return answers[id]; }).length;
-    var answered = !!answers.COUNT && (answers.COUNT === "none" || done === setup.questions.length);
+    var act = active();
+    var done = act.filter(function (id) { return answers[id]; }).length;
+    var answered = !!answers.COUNT && !!answers.TASK && done === act.length;
     btn.disabled = !answered || !contactOk();
-    document.getElementById("progress").textContent = answers.COUNT === "none" ? "" :
-      done + " of " + setup.questions.length + " answered";
+    document.getElementById("progress").textContent = answers.COUNT ? done + " of " + act.length + " answered" : "";
   }
 
   // Count question: not scored; sets the headline and the "None" path.
@@ -295,8 +305,10 @@ if (typeof module !== "undefined") module.exports = Engine;
     input.type = "radio"; input.name = "COUNT"; input.value = o.value;
     input.addEventListener("change", function () {
       answers.COUNT = o.value;
-      list.hidden = o.value === "none";
+      // "None": show only the project oversight statements (ruling 84).
+      var act = active();
       document.getElementById("answer-prompt").hidden = o.value === "none";
+      Array.prototype.forEach.call(list.children, function (li) { li.hidden = act.indexOf(li.dataset.id) < 0; });
       // "Some" has no meaning for 1 tool: hide it and clear any "Some" answers.
       var one = o.value === "1";
       Array.prototype.forEach.call(document.querySelectorAll('input[value="some"]'), function (inp) {
@@ -311,9 +323,27 @@ if (typeof module !== "undefined") module.exports = Engine;
   });
   countBox.appendChild(cg);
 
+  // Task question: not scored; names the first task to hand to software (ruling 84).
+  var taskBox = document.getElementById("task");
+  taskBox.appendChild(el("p", "statement-text count-text", setup.task.text));
+  var tg = el("div", "choices");
+  tg.setAttribute("role", "radiogroup");
+  tg.setAttribute("aria-label", "First task to hand to software");
+  setup.task.options.forEach(function (o) {
+    var label = el("label", "choice");
+    var input = document.createElement("input");
+    input.type = "radio"; input.name = "TASK"; input.value = o.value;
+    input.addEventListener("change", function () { answers.TASK = o.value; update(); });
+    label.appendChild(input);
+    label.appendChild(el("span", null, o.label));
+    tg.appendChild(label);
+  });
+  taskBox.appendChild(tg);
+
   setup.questions.forEach(function (id, i) {
     var q = byId[id];
     var li = el("li", "statement");
+    li.dataset.id = id;
     li.appendChild(el("p", "statement-text", q.text));
     var group = el("div", "choices");
     group.setAttribute("role", "radiogroup");
@@ -355,6 +385,13 @@ if (typeof module !== "undefined") module.exports = Engine;
     out.innerHTML = "";
     if (!saved) out.appendChild(el("p", "save-error", setup.contact.error));
 
+    function taskBlock() {
+      var st = el("section", "block");
+      st.appendChild(el("h2", null, r.task.heading));
+      st.appendChild(el("p", null, r.task.line));
+      st.appendChild(peerLine(r.task.peer, "peer"));
+      out.appendChild(st);
+    }
     function nextStep() {
       var s5 = el("section", "block");
       s5.appendChild(el("h2", null, "Next step"));
@@ -395,6 +432,9 @@ if (typeof module !== "undefined") module.exports = Engine;
       s0.appendChild(el("h2", null, "Your result"));
       s0.appendChild(el("p", null, r.message));
       out.appendChild(s0);
+      levels();
+      planBlock(false);
+      taskBlock();
       nextStep();
       finish();
       return;
@@ -411,6 +451,8 @@ if (typeof module !== "undefined") module.exports = Engine;
     s1.appendChild(el("p", null, r.tier.explain));
     out.appendChild(s1);
 
+    levels();
+    function levels() {
     // 2. Domain levels
     var s2 = el("section", "block");
     s2.appendChild(el("h2", null, "Domain levels"));
@@ -427,6 +469,7 @@ if (typeof module !== "undefined") module.exports = Engine;
       s2.appendChild(row);
     });
     out.appendChild(s2);
+    }
 
     // 3. Peer comparison for the lowest domains, each with a line that places the practice.
     if (r.peers.length) {
@@ -439,10 +482,12 @@ if (typeof module !== "undefined") module.exports = Engine;
       out.appendChild(s3);
     }
 
+    planBlock(true);
+    function planBlock(withTier) {
     // 4. 90-day decision plan
     var s4 = el("section", "block");
     s4.appendChild(el("h2", null, "Your 90-day decision plan"));
-    s4.appendChild(el("p", "decision", r.tier.decision));
+    if (withTier) s4.appendChild(el("p", "decision", r.tier.decision));
     var ol = el("ol");
     r.plan.forEach(function (p) {
       var li = el("li");
@@ -458,7 +503,9 @@ if (typeof module !== "undefined") module.exports = Engine;
       s4.appendChild(ul);
     }
     out.appendChild(s4);
+    }
 
+    taskBlock();
     // 5. Next step
     nextStep();
     finish();
