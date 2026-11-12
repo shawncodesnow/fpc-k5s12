@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Free Practice Check</title>
+<style>
+:root { --navy:#1B2A4A; --amber:#D4782A; --white:#F7F3ED; --ink:#1f2430; --muted:#5b6475; --line:#d9d2c5; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--white); color:var(--ink); font:16px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+header { background:var(--navy); color:var(--white); padding:28px 16px; }
+header .wrap, main { max-width:760px; margin:0 auto; }
+h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight:normal; }
+h1 { margin:0 0 6px; font-size:30px; }
+header p { margin:4px 0; }
+.question { color:#f0c9a3; font-size:18px; }
+main { padding:24px 16px 48px; }
+ol#statements { list-style:none; padding:0; margin:0; counter-reset:s; }
+.statement { counter-increment:s; background:#fff; border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin:0 0 12px; }
+.statement-text { margin:0 0 10px; }
+.statement-text::before { content: counter(s) ". "; color:var(--amber); font-weight:600; }
+.choices { display:flex; flex-wrap:wrap; gap:8px; }
+.choice { display:flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer; }
+.choice:has(input:checked) { border-color:var(--navy); background:#e9edf5; }
+.actions { display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin:20px 0; }
+#progress { color:var(--muted); }
+button { font:inherit; border:0; border-radius:6px; padding:10px 18px; cursor:pointer; background:var(--amber); color:#fff; }
+button:disabled { background:#c9c2b6; cursor:not-allowed; }
+#result { border-top:3px solid var(--navy); margin-top:24px; padding-top:8px; }
+.block { margin:18px 0; }
+.block h2 { color:var(--navy); margin:0 0 8px; font-size:22px; }
+.tier { font-size:20px; margin:0 0 4px; }
+.tier strong { color:var(--amber); }
+.domain-row { display:grid; grid-template-columns: 1fr auto; gap:4px 12px; padding:8px 0; border-bottom:1px solid var(--line); }
+.domain-name { font-weight:600; }
+.bar { display:flex; gap:3px; align-self:center; }
+.seg { width:36px; height:10px; border-radius:2px; background:#e3ddd2; }
+.seg.on { background:var(--navy); }
+.domain-label { grid-column:1 / -1; color:var(--muted); font-size:14px; }
+.source { color:var(--muted); font-size:14px; }
+.source a { color:var(--navy); }
+.decision { font-weight:600; }
+.count-text { font-weight:600; }
+.count { counter-increment:none; }
+.count-text::before { content:none; }
+.neutral { font-weight:600; color:var(--navy); }
+#top-peers { margin-top:14px; border-top:1px solid #34456b; padding-top:10px; }
+#top-peers .peer { font-size:15px; margin:6px 0; }
+#top-peers .source, #top-peers .source a { color:#c9d1e0; }
+.answer-prompt { font-weight:600; margin:18px 0 10px; }
+.placement { margin:-4px 0 12px; font-weight:600; color:var(--navy); }
+.contact { counter-increment:none; }
+.contact h2 { color:var(--navy); margin:0 0 10px; font-size:20px; }
+.contact-fields { display:grid; grid-template-columns: 1fr 1fr; gap:10px 12px; }
+.contact-fields label { display:flex; flex-direction:column; font-size:14px; color:var(--muted); gap:4px; }
+.contact-fields input { font:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:6px; color:var(--ink); }
+@media (max-width:520px) { .contact-fields { grid-template-columns: 1fr; } }
+.save-error { color:#9b2c1c; font-weight:600; }
+.subscribe ul { padding-left:20px; }
+.subscribe li { margin:6px 0; }
+.subscribe a { color:var(--navy); }
+footer { color:var(--muted); font-size:13px; max-width:760px; margin:0 auto; padding:0 16px 32px; }
+@media print {
+  header { background:none; color:var(--ink); padding:0 0 8px; border-bottom:2px solid var(--navy); }
+  .question { color:var(--muted); }
+  #top-peers .source, #top-peers .source a { color:var(--muted); }
+  #questions, .actions, button.print { display:none !important; }
+  #result { border-top:0; }
+  .seg { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1 id="tool-name"></h1>
+  <p class="question" id="tool-question"></p>
+  <p id="tool-intro"></p>
+  <div id="top-peers"></div>
+</div></header>
+<main>
+  <section id="questions">
+    <div id="count" class="statement count"></div>
+    <p id="answer-prompt" class="answer-prompt"></p>
+    <ol id="statements"></ol>
+    <section id="contact" class="statement contact">
+      <h2 id="contact-heading"></h2>
+      <div id="contact-fields" class="contact-fields"></div>
+      <p id="contact-privacy" class="source"></p>
+    </section>
+    <div class="actions">
+      <button id="see-result" type="button" disabled>See my result</button>
+      <span id="progress"></span>
+    </div>
+  </section>
+  <section id="result" hidden></section>
+</main>
+<footer>Beacon IT Advisory · This page saves your answers, your result and your contact details so Beacon can follow up. It asks for no patient information.</footer>
+<script>window.FREE_TOOL_DATA = {"bank":{"domains":[{"key":"governance","name":"Governance and risk","maps_to":["D7"],"benchmark":"mgma_ai_policy"},{"key":"workflow","name":"Workflow fit","maps_to":["D1","D2","D3"],"benchmark":"mgma_role_redesign"},{"key":"data","name":"Data and integration","maps_to":["D4","D5"],"benchmark":null},{"key":"people","name":"People and change","maps_to":["D6"],"benchmark":null},{"key":"buyer","name":"Proof of value","maps_to":["D8"],"benchmark":"mgma_work_shift"}],"questions":[{"id":"GOV-01","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":4,"text":"Your written AI use policy covers each tool.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-05","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":1,"text":"Each AI vendor signed a business associate agreement (BAA) with your practice.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-02","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":2,"text":"One named person approved each tool before staff used it.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-03","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":2,"text":"Each tool is on a list you keep of the AI tools staff use, including free ones.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-04","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":2,"text":"Staff check each tool's output before it goes in the chart or to a payer.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"GOV-06","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"You tell patients when an AI tool records the visit or drafts their messages.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools."},{"id":"WRK-01","domain":"workflow","maps_to":"D1","anchor":"L3","step":"free","version":3,"text":"You can name the workflow each tool is meant to fix.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"WRK-02","domain":"workflow","maps_to":"D2","anchor":"L4","step":"free","version":3,"text":"You measured each workflow before its tool started, so you have a baseline to compare.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"WRK-03","domain":"workflow","maps_to":"D3","anchor":"L4","step":"free","version":2,"text":"You changed a staff role around each tool.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"DAT-01","domain":"data","maps_to":"D4","anchor":"L3","step":"free","version":3,"text":"Each tool reads from your EHR without staff copying data by hand.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"DAT-02","domain":"data","maps_to":"D5","anchor":"L4","step":"free","version":3,"text":"You can get a report of what each tool did last month.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"DAT-03","domain":"data","maps_to":"D5","anchor":"L3","step":"free","version":2,"text":"You can see who uses each tool and how often.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"PPL-01","domain":"people","maps_to":"D6","anchor":"L3","step":"free","version":3,"text":"More than half of the staff each tool was bought for use it each week.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"PPL-04","domain":"people","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"You checked each AI tool that affects patient care for bias by race, sex, age or disability.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"PPL-03","domain":"people","maps_to":"D6","anchor":"L3","step":"free","version":2,"text":"The clinicians who use each tool had a say in choosing it.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"BUY-01","domain":"buyer","maps_to":"D8","anchor":"L3","step":"free","version":3,"text":"You know the full yearly cost of each tool, with add-ons and staff time.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date."},{"id":"BUY-02","domain":"buyer","maps_to":"D8","anchor":"L4","step":"free","version":3,"text":"You compared each tool's cost with a measured return in dollars.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date."},{"id":"BUY-03","domain":"buyer","maps_to":"D8","anchor":"L4","step":"free","version":2,"text":"You set a date to decide whether to keep or stop each tool.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date."}]},"scale":{"answers":{"all":100,"some":50,"none":0,"notsure":0},"mapping_rule":"Domain percent = average of All 100, Some 50, None 0, Not sure 0. Rubric level: 0% = 1, 1 to 49% = 2, 50 to 99% = 3, 100% = 4. Level 5 needs evidence, so only the ScoreCard can give it. A domain with half or more Not sure answers is Unknown and stays out of the average.","level_bands":[{"min":100,"level":4},{"min":50,"level":3},{"min":1,"level":2},{"min":0,"level":1}],"levels":{"1":"Critical Gap","2":"Significant Gap","3":"Functional Baseline","4":"Strong Foundation"},"unknown_label":"Unknown: find out first","tie_order":["governance","buyer","workflow","data","people"],"tiers":[{"min":3.5,"name":"Well-Positioned","explain":"Your practice has the basics in place to run its AI tools well.","decision":"Keep your tools. Measure them again in 90 days before you add another one."},{"min":2.5,"name":"Functional Baseline","explain":"Your practice has some basics in place, and some gaps that limit its AI tools.","decision":"Fix the 2 lowest domains in the next 90 days. Then decide which tools to keep or stop."},{"min":1.5,"name":"Significant Gaps","explain":"Your practice has gaps that put the value of its AI tools at risk.","decision":"Hold new AI purchases. Close the 2 lowest gaps first."},{"min":0,"name":"Critical State","explain":"Your practice is missing the basics that keep its AI tools safe and worth their cost.","decision":"Hold new AI purchases. Close the 2 lowest gaps first."}],"unknown_tier":{"name":"Unknown","explain":"You answered Not sure to half or more of the statements in every domain, so the check cannot score your practice yet.","decision":"Find out the answers in the list below. Then take the check again."},"review_first":{"question":"GOV-04","when":["none","notsure"],"domain":"First, staff review","next_step":"Make staff check AI output before it goes in the chart or to a payer. Put this rule in your AI use policy."},"benchmarks":{"mgma_ai_in_visits":{"line":"83% of practice leaders who answered an MGMA Stat poll say their practice uses AI in some patient visits, up from 71% a year earlier.","source":"MGMA Stat poll","date":"Aug 4, 2026","n":189,"url":"https://www.mgma.com/mgma-stat/ai-use-expands-leaders-shift-attention-to-measurement"},"mgma_productivity":{"line":"46% of practice leaders who answered an MGMA Stat poll say AI made their providers more productive. 14% are not sure, mostly because they cannot measure it.","source":"MGMA Stat poll","date":"May 12, 2026","n":257,"url":"https://mgma.com/mgma-stat/are-ai-tools-making-clinicians-more-productive-its-complicated"},"mgma_ai_policy":{"line":"20% of practice leaders who answered an MGMA Stat poll have AI governance or a formal AI policy. 22% are building one. 56% have none.","source":"MGMA Stat poll","date":"Jan 20, 2026","n":328,"url":"https://www.mgma.com/mgma-stat/ai-governance-in-medical-group-practices","place":{"question":"GOV-01","by_answer":{"all":"Your answer puts you with the 20% that have a formal AI policy.","some":"Your answer puts you near the 22% that are still building one.","none":"Your answer puts you with the 56% that have none.","notsure":"Find out whether your policy covers each tool to see where you stand."}}},"mgma_role_redesign":{"line":"68% of practice leaders who answered an MGMA Stat poll have not redesigned a role or changed staffing with AI in the past year.","source":"MGMA Stat poll","date":"Jun 2, 2026","n":260,"url":"https://mgma.com/mgma-stat/ai-slowly-redesigning-work-rather-than-replacing-workers","place":{"question":"WRK-03","by_answer":{"all":"Your answer puts you outside the 68% that have not.","some":"Your answer puts you outside the 68% that have not.","none":"Your answer puts you with the 68% that have not.","notsure":"Find out whether you changed a staff role around each tool to see where you stand."}}},"mgma_work_shift":{"line":"When practice leaders who answered an MGMA Stat poll describe what AI did to staff work, 37% say it shifted work to other tasks and 29% say it reduced work.","source":"MGMA Stat poll","date":"Aug 4, 2026","n":189,"url":"https://www.mgma.com/mgma-stat/ai-use-expands-leaders-shift-attention-to-measurement","place":{"question":"BUY-02","by_answer":{"all":"You compared each tool's cost with a measured return, so you can say which group your practice is in.","some":"You have not compared every tool's cost with a measured return, so you cannot yet say which group your practice is in.","none":"You have not compared any tool's cost with a measured return, so you cannot yet say which group your practice is in.","notsure":"Find out whether anyone compared each tool's cost with a measured return."}}}},"neutral_line":"We sell no AI tools and take no vendor fees.","next_step_offer":"The ScoreCard scores all 8 detailed domains against public MGMA survey figures. $600, credited in full to the Assessment."},"setup":{"id":"free-practice-check","name":"Free Practice Check","purpose":"The check measures whether a practice has the controls to run its AI tools safely and to prove they pay off.","question":"Are the AI tools you pay for paying off?","intro":"Count the AI tools your practice uses. Then answer 18 statements about all of them. It takes about 7 minutes.","answer_prompt":"For each statement, answer for the AI tools your practice uses.","choices":[["all","All"],["some","Some"],["none","None"],["notsure","Not sure"]],"count":{"text":"How many AI tools does your practice use? Include free tools staff use on their own.","options":[{"value":"none","label":"None"},{"value":"1","label":"1","headline":"Your AI tool"},{"value":"2-3","label":"2 to 3","headline":"Your 2 to 3 AI tools"},{"value":"4+","label":"4 or more","headline":"Your 4 or more AI tools"},{"value":"notsure","label":"Not sure","headline":"Your AI tools"}],"none_message":"This check is for practices that already use AI tools. Come back when your practice starts one.","notsure_find_out":"List every AI tool your staff use, including free ones."},"find_out_prefix":"Find out whether ","questions":["GOV-01","GOV-05","GOV-02","GOV-03","GOV-04","GOV-06","WRK-01","WRK-02","WRK-03","DAT-01","DAT-02","DAT-03","PPL-01","PPL-04","PPL-03","BUY-01","BUY-02","BUY-03"],"top_benchmarks":["mgma_ai_in_visits","mgma_productivity"],"hubspot":{"portal":"245756389","form":"12845976-c08a-4641-b497-8bf4c5875bd9"},"contact":{"heading":"Enter your details to see your result","fields":[["firstname","First name","given-name"],["lastname","Last name","family-name"],["company","Company name","organization"],["email","Email","email"]],"privacy":"Your details go to Beacon IT Advisory only. You get 1 email with your result. No list, no sharing.","error":"Your details did not save. Your result shows below. Please tell the person who sent you this link."},"subscribe":{"heading":"More from Shawn","line":"Shawn L. Self, PMP writes about putting AI to work in physician practices.","rows":[{"channel":"Substack","action":"Subscribe","url":"https://shawnlself.substack.com/subscribe","verb":"Read","title":"How to Know if Your AI Tool Actually Works","example":"https://shawnlself.substack.com/p/how-to-know-if-your-ai-tool-actually"},{"channel":"LinkedIn","action":"Follow","url":"https://www.linkedin.com/in/shawnlself","verb":"Read","title":"Govern Before You Adopt","example":"https://www.linkedin.com/feed/update/urn:li:activity:7477400617838227456/"},{"channel":"YouTube","action":"Subscribe","url":"https://www.youtube.com/@shawnlselfpmp?sub_confirmation=1","verb":"Watch","title":"Did the AI do that? How to tell if your AI tool really worked","example":"https://www.youtube.com/shorts/EiVNFQ68RQQ"}]}},"build":"2026-11-12 18:14"};</script>
+<script>// Free-tool scoring engine. Pure functions, no DOM. Shared by the page and the test script.
+// Spec: outputs/design_181_free-tool-engine_2026-11-04.md (vault), sections 1 and 2.
+var Engine = (function () {
+  function lowerFirst(s) { return s.charAt(0).toLowerCase() + s.slice(1); }
+
+  function score(bank, scale, setup, answers) {
+    var count = answers.COUNT;
+    var opt = setup.count.options.filter(function (o) { return o.value === count; })[0];
+    if (!opt) throw new Error("Missing answer: COUNT");
+    if (count === "none") return { none: true, message: setup.count.none_message,
+                                   neutral: scale.neutral_line, offer: scale.next_step_offer };
+    var byId = {};
+    bank.questions.forEach(function (q) { byId[q.id] = q; });
+    var domainInfo = {};
+    bank.domains.forEach(function (d) { domainInfo[d.key] = d; });
+
+    // Domains in the order the setup lists their questions.
+    var order = [], doms = {};
+    setup.questions.forEach(function (id) {
+      var q = byId[id];
+      if (!q) throw new Error("Unknown question id: " + id);
+      if (!doms[q.domain]) {
+        doms[q.domain] = { key: q.domain, name: domainInfo[q.domain].name, points: 0, notSure: 0,
+                           questions: [], next_step: q.next_step };
+        order.push(q.domain);
+      }
+      var a = answers[id];
+      if (!(a in scale.answers)) throw new Error("Missing answer: " + id);
+      doms[q.domain].questions.push(q);
+      doms[q.domain].points += scale.answers[a]; // "Not sure" scores as None.
+      if (a === "notsure") doms[q.domain].notSure++;
+    });
+
+    var domains = order.map(function (k) {
+      var d = doms[k], n = d.questions.length;
+      d.percent = Math.round(d.points / n);
+      d.unknown = d.notSure * 2 >= n;
+      if (d.unknown) { d.level = null; d.label = scale.unknown_label; }
+      else {
+        d.level = scale.level_bands.filter(function (b) { return d.percent >= b.min; })[0].level;
+        d.label = scale.levels[String(d.level)];
+      }
+      d.rank = scale.tie_order.indexOf(k);
+      return d;
+    });
+
+    var scored = domains.filter(function (d) { return !d.unknown; });
+    var average = null, tier = scale.unknown_tier;
+    if (scored.length) {
+      var sum = scored.reduce(function (s, d) { return s + d.level; }, 0);
+      average = Math.round((sum / scored.length) * 10) / 10;
+      tier = scale.tiers.filter(function (t) { return average >= t.min; })[0];
+    }
+
+    // 2 lowest scored domains by percent; ties follow the fixed tie order.
+    var lowest = scored.slice().sort(function (a, b) {
+      return (a.percent - b.percent) || (a.rank - b.rank);
+    }).slice(0, 2);
+
+    var plan = lowest.map(function (d) { return { domain: d.name, next_step: d.next_step }; });
+    var rf = scale.review_first;
+    if (rf.when.indexOf(answers[rf.question]) >= 0) plan.unshift({ domain: rf.domain, next_step: rf.next_step });
+
+    var findOut = setup.questions.filter(function (id) { return answers[id] === "notsure"; })
+      .map(function (id) { return setup.find_out_prefix + lowerFirst(byId[id].text); });
+    if (count === "notsure") findOut.unshift(setup.count.notsure_find_out);
+
+    // One peer line for each of the 2 lowest domains that has one, with a line that places the answer.
+    var peers = lowest.filter(function (d) { return domainInfo[d.key].benchmark; }).map(function (d) {
+      var b = scale.benchmarks[domainInfo[d.key].benchmark];
+      if (!b) throw new Error("Unknown benchmark key: " + domainInfo[d.key].benchmark);
+      return Object.assign({}, b, { placement: b.place ? b.place.by_answer[answers[b.place.question]] : null });
+    });
+    var top = setup.top_benchmarks.map(function (k) {
+      if (!scale.benchmarks[k]) throw new Error("Unknown benchmark key: " + k);
+      return scale.benchmarks[k];
+    });
+
+    return { headline: opt.headline, neutral: scale.neutral_line, average: average, tier: tier,
+             domains: domains, plan: plan, findOut: findOut, peers: peers, top: top, offer: scale.next_step_offer };
+  }
+  // HubSpot form body: the 4 contact fields, the result ID and 1 text summary. No free text beyond the contact.
+  // Throws on a missing name or practice, a bad email or an answer outside the allowed values.
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  function hubspotBody(setup, scale, result, answers, resultId, contact, meta) {
+    contact = contact || {};
+    ["firstname", "lastname", "company"].forEach(function (k) {
+      if (!contact[k] || !String(contact[k]).trim()) throw new Error("Missing contact field: " + k);
+    });
+    if (!EMAIL.test(String(contact.email || "").trim())) throw new Error("Bad email");
+    if (!/^[a-z0-9]{6,}$/.test(resultId)) throw new Error("Bad result ID");
+    var counts = setup.count.options.map(function (o) { return o.value; });
+    if (counts.indexOf(answers.COUNT) < 0) throw new Error("Bad count answer");
+    var parts = ["time=" + meta.time, "build=" + meta.build, "count=" + answers.COUNT];
+    if (result.none) parts.push("tier=None");
+    else {
+      parts.push("answers=" + setup.questions.map(function (id) {
+        if (!(answers[id] in scale.answers)) throw new Error("Bad answer: " + id);
+        return id + ":" + answers[id];
+      }).join(","));
+      parts.push("domains=" + result.domains.map(function (d) {
+        return d.name + ":" + (d.unknown ? "Unknown" : d.percent + "%:L" + d.level);
+      }).join(","));
+      parts.push("average=" + (result.average === null ? "none" : result.average.toFixed(1)));
+      parts.push("tier=" + result.tier.name);
+    }
+    var f = function (name, value) { return { objectTypeId: "0-1", name: name, value: String(value).trim() }; };
+    return { fields: [f("firstname", contact.firstname), f("lastname", contact.lastname), f("company", contact.company),
+                      f("email", contact.email), f("fpc_result_id", resultId), f("fpc_result", parts.join(" | "))] };
+  }
+  return { score: score, hubspotBody: hubspotBody };
+})();
+if (typeof module !== "undefined") module.exports = Engine;
+</script>
+<script>// Page runner: draws the statements from the inlined data and shows the result.
+(function () {
+  var DATA = window.FREE_TOOL_DATA;
+  var bank = DATA.bank, scale = DATA.scale, setup = DATA.setup;
+  var byId = {};
+  bank.questions.forEach(function (q) { byId[q.id] = q; });
+  var answers = {};
+  // 1 result ID per page load, so a second click sends the same ID.
+  var resultId = Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+  var HUBSPOT_URL = "https://api.hsforms.com/submissions/v3/integration/submit/" +
+    setup.hubspot.portal + "/" + setup.hubspot.form;
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  document.title = setup.name;
+  document.getElementById("tool-name").textContent = setup.name;
+  document.getElementById("tool-question").textContent = setup.question;
+  document.getElementById("tool-intro").textContent = setup.intro;
+
+  function peerLine(b, cls) {
+    var p = el("p", cls, b.line + " ");
+    var src = el("span", "source");
+    src.appendChild(document.createTextNode("(" + b.source + ", " + b.date + ", " +
+      (b.n ? b.n.toLocaleString("en-US") + " responses, " : "")));
+    var a = el("a", null, "source");
+    a.href = b.url; a.target = "_blank"; a.rel = "noopener";
+    src.appendChild(a);
+    src.appendChild(document.createTextNode(")"));
+    p.appendChild(src);
+    return p;
+  }
+  // The 2 fixed peer lines show once, at the top of the page.
+  var topBox = document.getElementById("top-peers");
+  setup.top_benchmarks.forEach(function (k) { topBox.appendChild(peerLine(scale.benchmarks[k], "peer")); });
+  document.getElementById("answer-prompt").textContent = setup.answer_prompt;
+
+  var list = document.getElementById("statements");
+  var btn = document.getElementById("see-result");
+  var choices = setup.choices;
+
+  // Contact form: all 4 fields required before the result shows (ruling 82).
+  var contact = {};
+  document.getElementById("contact-heading").textContent = setup.contact.heading;
+  document.getElementById("contact-privacy").textContent = setup.contact.privacy;
+  var cf = document.getElementById("contact-fields");
+  setup.contact.fields.forEach(function (f) {
+    var label = el("label", null, f[1]);
+    var input = document.createElement("input");
+    input.name = f[0]; input.required = true; input.maxLength = 100; input.autocomplete = f[2];
+    input.type = f[0] === "email" ? "email" : "text";
+    input.addEventListener("input", function () { contact[f[0]] = input.value; update(); });
+    label.appendChild(input);
+    cf.appendChild(label);
+  });
+  function contactOk() {
+    return ["firstname", "lastname", "company"].every(function (k) { return contact[k] && contact[k].trim(); }) &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((contact.email || "").trim());
+  }
+
+  function update() {
+    var done = setup.questions.filter(function (id) { return answers[id]; }).length;
+    var answered = !!answers.COUNT && (answers.COUNT === "none" || done === setup.questions.length);
+    btn.disabled = !answered || !contactOk();
+    document.getElementById("progress").textContent = answers.COUNT === "none" ? "" :
+      done + " of " + setup.questions.length + " answered";
+  }
+
+  // Count question: not scored; sets the headline and the "None" path.
+  var countBox = document.getElementById("count");
+  countBox.appendChild(el("p", "statement-text count-text", setup.count.text));
+  var cg = el("div", "choices");
+  cg.setAttribute("role", "radiogroup");
+  cg.setAttribute("aria-label", "Number of AI tools");
+  setup.count.options.forEach(function (o) {
+    var label = el("label", "choice");
+    var input = document.createElement("input");
+    input.type = "radio"; input.name = "COUNT"; input.value = o.value;
+    input.addEventListener("change", function () {
+      answers.COUNT = o.value;
+      list.hidden = o.value === "none";
+      document.getElementById("answer-prompt").hidden = o.value === "none";
+      // "Some" has no meaning for 1 tool: hide it and clear any "Some" answers.
+      var one = o.value === "1";
+      Array.prototype.forEach.call(document.querySelectorAll('input[value="some"]'), function (inp) {
+        inp.parentNode.hidden = one;
+        if (one && inp.checked) { inp.checked = false; delete answers[inp.name]; }
+      });
+      update();
+    });
+    label.appendChild(input);
+    label.appendChild(el("span", null, o.label));
+    cg.appendChild(label);
+  });
+  countBox.appendChild(cg);
+
+  setup.questions.forEach(function (id, i) {
+    var q = byId[id];
+    var li = el("li", "statement");
+    li.appendChild(el("p", "statement-text", q.text));
+    var group = el("div", "choices");
+    group.setAttribute("role", "radiogroup");
+    group.setAttribute("aria-label", "Statement " + (i + 1));
+    choices.forEach(function (c) {
+      var label = el("label", "choice");
+      var input = document.createElement("input");
+      input.type = "radio"; input.name = id; input.value = c[0];
+      input.addEventListener("change", function () {
+        answers[id] = c[0];
+        update();
+      });
+      label.appendChild(input);
+      label.appendChild(el("span", null, c[1]));
+      group.appendChild(label);
+    });
+    li.appendChild(group);
+    list.appendChild(li);
+  });
+  update();
+
+  btn.addEventListener("click", function () {
+    var r = Engine.score(bank, scale, setup, answers);
+    var body = Engine.hubspotBody(setup, scale, r, answers, resultId, contact,
+      { time: new Date().toISOString(), build: DATA.build });
+    btn.disabled = true;
+    btn.textContent = "Saving";
+    fetch(HUBSPOT_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (res) { return res.ok; }, function () { return false; })
+      .then(function (saved) {
+        btn.textContent = "See my result";
+        update();
+        show(r, saved);
+      });
+  });
+
+  function show(r, saved) {
+    var out = document.getElementById("result");
+    out.innerHTML = "";
+    if (!saved) out.appendChild(el("p", "save-error", setup.contact.error));
+
+    function nextStep() {
+      var s5 = el("section", "block");
+      s5.appendChild(el("h2", null, "Next step"));
+      s5.appendChild(el("p", "neutral", r.neutral));
+      s5.appendChild(el("p", null, r.offer));
+      out.appendChild(s5);
+    }
+    function finish() {
+      var sb = el("section", "block subscribe");
+      sb.appendChild(el("h2", null, setup.subscribe.heading));
+      sb.appendChild(el("p", null, setup.subscribe.line));
+      var ul = el("ul");
+      setup.subscribe.rows.forEach(function (row) {
+        var li = el("li");
+        li.appendChild(el("strong", null, row.channel + ": "));
+        var a1 = el("a", null, row.action);
+        a1.href = row.url; a1.target = "_blank"; a1.rel = "noopener";
+        li.appendChild(a1);
+        li.appendChild(document.createTextNode(". " + row.verb + " "));
+        var a2 = el("a", null, '"' + row.title + '"');
+        a2.href = row.example; a2.target = "_blank"; a2.rel = "noopener";
+        li.appendChild(a2);
+        li.appendChild(document.createTextNode("."));
+        ul.appendChild(li);
+      });
+      sb.appendChild(ul);
+      out.appendChild(sb);
+      var pr = el("button", "print", "Print or save as PDF");
+      pr.type = "button";
+      pr.addEventListener("click", function () { window.print(); });
+      out.appendChild(pr);
+      out.hidden = false;
+      out.scrollIntoView({ behavior: "smooth" });
+    }
+
+    if (r.none) {
+      var s0 = el("section", "block");
+      s0.appendChild(el("h2", null, "Your result"));
+      s0.appendChild(el("p", null, r.message));
+      out.appendChild(s0);
+      nextStep();
+      finish();
+      return;
+    }
+
+    // 1. Result
+    var s1 = el("section", "block");
+    s1.appendChild(el("h2", null, "Your result"));
+    var tierLine = el("p", "tier");
+    tierLine.appendChild(document.createTextNode(r.headline + ": "));
+    tierLine.appendChild(el("strong", null, r.tier.name));
+    if (r.average !== null) tierLine.appendChild(document.createTextNode(" (average level " + r.average.toFixed(1) + " of 4.0)"));
+    s1.appendChild(tierLine);
+    s1.appendChild(el("p", null, r.tier.explain));
+    out.appendChild(s1);
+
+    // 2. Domain levels
+    var s2 = el("section", "block");
+    s2.appendChild(el("h2", null, "Domain levels"));
+    r.domains.forEach(function (d) {
+      var row = el("div", "domain-row");
+      row.appendChild(el("span", "domain-name", d.name));
+      var bar = el("span", "bar");
+      bar.setAttribute("aria-hidden", "true");
+      for (var k = 1; k <= 4; k++) bar.appendChild(el("span", d.level && k <= d.level ? "seg on" : "seg"));
+      row.appendChild(bar);
+      var lab = d.unknown ? d.label : d.percent + "%, Level " + d.level + ", " + d.label;
+      if (d.notSure > 0) lab += " · Not sure: " + d.notSure;
+      row.appendChild(el("span", "domain-label", lab));
+      s2.appendChild(row);
+    });
+    out.appendChild(s2);
+
+    // 3. Peer comparison for the lowest domains, each with a line that places the practice.
+    if (r.peers.length) {
+      var s3 = el("section", "block");
+      s3.appendChild(el("h2", null, "How peers compare"));
+      r.peers.forEach(function (b) {
+        s3.appendChild(peerLine(b, "peer"));
+        if (b.placement) s3.appendChild(el("p", "placement", b.placement));
+      });
+      out.appendChild(s3);
+    }
+
+    // 4. 90-day decision plan
+    var s4 = el("section", "block");
+    s4.appendChild(el("h2", null, "Your 90-day decision plan"));
+    s4.appendChild(el("p", "decision", r.tier.decision));
+    var ol = el("ol");
+    r.plan.forEach(function (p) {
+      var li = el("li");
+      li.appendChild(el("strong", null, p.domain + ": "));
+      li.appendChild(document.createTextNode(p.next_step));
+      ol.appendChild(li);
+    });
+    s4.appendChild(ol);
+    if (r.findOut.length) {
+      s4.appendChild(el("h3", null, "Find out"));
+      var ul = el("ul");
+      r.findOut.forEach(function (t) { ul.appendChild(el("li", null, t)); });
+      s4.appendChild(ul);
+    }
+    out.appendChild(s4);
+
+    // 5. Next step
+    nextStep();
+    finish();
+  }
+})();
+</script>
+</body>
+</html>
