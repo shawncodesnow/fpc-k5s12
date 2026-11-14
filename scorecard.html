@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Practice ScoreCard</title>
+<style>
+:root { --navy:#1B2A4A; --amber:#D4782A; --white:#F7F3ED; --ink:#1f2430; --muted:#5b6475; --line:#d9d2c5; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--white); color:var(--ink); font:16px/1.55 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+header { background:var(--navy); color:var(--white); padding:28px 16px; }
+header .wrap, main { max-width:760px; margin:0 auto; }
+h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight:normal; }
+h1 { margin:0 0 6px; font-size:30px; }
+header p { margin:4px 0; }
+.question { color:#f0c9a3; font-size:18px; }
+main { padding:24px 16px 48px; }
+ol#statements { list-style:none; padding:0; margin:0; counter-reset:s; }
+.statement { counter-increment:s; background:#fff; border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin:0 0 12px; }
+.statement-text { margin:0 0 10px; }
+.statement-text::before { content: counter(s) ". "; color:var(--amber); font-weight:600; }
+.choices { display:flex; flex-wrap:wrap; gap:8px; }
+.choice { display:flex; align-items:center; gap:6px; border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer; }
+.choice:has(input:checked) { border-color:var(--navy); background:#e9edf5; }
+.actions { display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin:20px 0; }
+#progress { color:var(--muted); }
+button { font:inherit; border:0; border-radius:6px; padding:10px 18px; cursor:pointer; background:var(--amber); color:#fff; }
+button:disabled { background:#c9c2b6; cursor:not-allowed; }
+#result { border-top:3px solid var(--navy); margin-top:24px; padding-top:8px; }
+.block { margin:18px 0; }
+.block h2 { color:var(--navy); margin:0 0 8px; font-size:22px; }
+.tier { font-size:20px; margin:0 0 4px; }
+.tier strong { color:var(--amber); }
+.domain-row { display:grid; grid-template-columns: 1fr auto; gap:4px 12px; padding:8px 0; border-bottom:1px solid var(--line); }
+.domain-name { font-weight:600; }
+.bar { display:flex; gap:3px; align-self:center; }
+.seg { width:36px; height:10px; border-radius:2px; background:#e3ddd2; }
+.seg.on { background:var(--navy); }
+.domain-label { grid-column:1 / -1; color:var(--muted); font-size:14px; }
+.source { color:var(--muted); font-size:14px; }
+.source a { color:var(--navy); }
+.decision { font-weight:600; }
+.count-text { font-weight:600; }
+.count { counter-increment:none; }
+.count-text::before { content:none; }
+.neutral { font-weight:600; color:var(--navy); }
+#top-peers { margin-top:14px; border-top:1px solid #34456b; padding-top:10px; }
+#top-peers .peer { font-size:15px; margin:6px 0; }
+#top-peers .source, #top-peers .source a { color:#c9d1e0; }
+.answer-prompt { font-weight:600; margin:18px 0 10px; }
+.placement { margin:-4px 0 12px; font-weight:600; color:var(--navy); }
+.contact { counter-increment:none; }
+.contact h2 { color:var(--navy); margin:0 0 10px; font-size:20px; }
+.contact-fields { display:grid; grid-template-columns: 1fr 1fr; gap:10px 12px; }
+.contact-fields label { display:flex; flex-direction:column; font-size:14px; color:var(--muted); gap:4px; }
+.contact-fields input { font:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:6px; color:var(--ink); }
+@media (max-width:520px) { .contact-fields { grid-template-columns: 1fr; } }
+.save-error { color:#9b2c1c; font-weight:600; }
+.subscribe ul { padding-left:20px; }
+.subscribe li { margin:6px 0; }
+.subscribe a { color:var(--navy); }
+footer { color:var(--muted); font-size:13px; max-width:760px; margin:0 auto; padding:0 16px 32px; }
+@media print {
+  header { background:none; color:var(--ink); padding:0 0 8px; border-bottom:2px solid var(--navy); }
+  .question { color:var(--muted); }
+  #top-peers .source, #top-peers .source a { color:var(--muted); }
+  #questions, .actions, button.print { display:none !important; }
+  #result { border-top:0; }
+  .seg { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+
+.domain-head { color:var(--navy); margin:28px 0 10px; font-size:22px; border-bottom:2px solid var(--line); padding-bottom:4px; }
+.free-tag { display:inline-block; font-size:12px; color:var(--muted); border:1px solid var(--line); border-radius:4px; padding:0 6px; margin-left:6px; }
+.number { counter-increment:none; }
+.number .statement-text::before { content:none; }
+.number input { font:inherit; width:140px; padding:6px 8px; border:1px solid var(--line); border-radius:6px; }
+.prefilled-line { background:#fff4e8; border:1px solid #f0c9a3; border-radius:8px; padding:10px 14px; }
+.cover { background:var(--navy); color:var(--white); border-radius:8px; padding:18px 20px; }
+.cover h2 { color:var(--white); }
+.cover .tier strong { color:#f0c9a3; }
+.dblock { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px 16px; margin:12px 0; break-inside:avoid; }
+.statement-text::before { content:none !important; }
+.dblock h3 { margin:0 0 4px; color:var(--navy); font-size:19px; }
+.sub { color:var(--muted); font-size:14px; margin:2px 0; }
+.note { font-style:italic; }
+.scorecard-link { font-weight:600; color:var(--navy); }
+@media print { .cover { background:none; color:var(--ink); border:2px solid var(--navy); } .cover h2 { color:var(--navy); } .cover .tier strong { color:var(--amber); } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1 id="tool-name"></h1>
+  <p class="question" id="tool-question"></p>
+  <p id="tool-intro"></p>
+</div></header>
+<main>
+  <section id="questions">
+    <p id="prefilled" class="prefilled-line" hidden></p>
+    <div id="count" class="statement count"></div>
+    <p id="answer-prompt" class="answer-prompt"></p>
+    <div id="domains"></div>
+    <section id="contact" class="statement contact">
+      <h2 id="contact-heading"></h2>
+      <div id="contact-fields" class="contact-fields"></div>
+      <p id="contact-privacy" class="source"></p>
+    </section>
+    <div class="actions">
+      <button id="see-result" type="button" disabled>See my ScoreCard</button>
+      <span id="progress"></span>
+    </div>
+  </section>
+  <section id="result" hidden></section>
+</main>
+<footer id="footer"></footer>
+<script>window.FREE_TOOL_DATA = {"bank":{"domains":[{"key":"governance","name":"Governance and risk","maps_to":["D7"],"benchmark":"mgma_ai_policy"},{"key":"workflow","name":"Workflow fit","maps_to":["D1","D2","D3"],"benchmark":"mgma_role_redesign"},{"key":"data","name":"Data and integration","maps_to":["D4","D5"],"benchmark":null},{"key":"people","name":"People and change","maps_to":["D6"],"benchmark":null},{"key":"buyer","name":"Proof of value","maps_to":["D8"],"benchmark":"mgma_work_shift"},{"key":"oversight","name":"Project oversight","maps_to":["D7"],"benchmark":null}],"questions":[{"id":"GOV-01","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":4,"text":"Your written AI use policy covers each tool.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-05","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":1,"text":"Each AI vendor signed a business associate agreement (BAA) with your practice.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-02","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":2,"text":"One named person approved each tool before staff used it.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-03","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":2,"text":"Each tool is on a list you keep of the AI tools staff use, including free ones.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-04","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":2,"text":"Staff check each tool's output before it goes in the chart or to a payer.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-06","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"You tell patients when an AI tool records the visit or drafts their messages.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-07","domain":"governance","maps_to":"D7","anchor":"L3","step":"free","version":1,"text":"You know which of your tools act on their own, such as booking visits, calling patients or sending claims, and which only draft for staff.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"GOV-08","domain":"governance","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"Each tool that acts on its own has written limits on what it may do without a person's approval.","next_step":"Start from the AMA model AI policy. Write a one-page policy, list every AI tool, confirm each BAA, and name who approves new tools and projects."},{"id":"WRK-01","domain":"workflow","maps_to":"D1","anchor":"L3","step":"free","version":3,"text":"You can name the workflow each tool is meant to fix.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"WRK-02","domain":"workflow","maps_to":"D2","anchor":"L4","step":"free","version":3,"text":"You measured each workflow before its tool started, so you have a baseline to compare.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"WRK-03","domain":"workflow","maps_to":"D3","anchor":"L4","step":"free","version":2,"text":"You changed a staff role around each tool.","next_step":"For each tool, name its workflow and count that workflow's time or errors for 2 weeks."},{"id":"DAT-01","domain":"data","maps_to":"D4","anchor":"L3","step":"free","version":3,"text":"Each tool reads from your EHR without staff copying data by hand.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"DAT-02","domain":"data","maps_to":"D5","anchor":"L4","step":"free","version":3,"text":"You can get a report of what each tool did last month.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"DAT-03","domain":"data","maps_to":"D5","anchor":"L3","step":"free","version":2,"text":"You can see who uses each tool and how often.","next_step":"Ask each vendor which EHR fields its tool reads and writes, and for a monthly use report."},{"id":"PPL-01","domain":"people","maps_to":"D6","anchor":"L3","step":"free","version":3,"text":"More than half of the staff each tool was bought for use it each week.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"PPL-04","domain":"people","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"You checked each AI tool that affects patient care for bias by race, sex, age or disability.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"PPL-03","domain":"people","maps_to":"D6","anchor":"L3","step":"free","version":2,"text":"The clinicians who use each tool had a say in choosing it.","next_step":"Count last week's users of each tool, check each patient-care tool for bias, and ask clinicians before the next purchase."},{"id":"BUY-01","domain":"buyer","maps_to":"D8","anchor":"L3","step":"free","version":3,"text":"You know the full yearly cost of each tool, with add-ons and staff time.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date. Put each tool on one project list with an owner and a go, hold or stop date."},{"id":"BUY-02","domain":"buyer","maps_to":"D8","anchor":"L4","step":"free","version":3,"text":"You compared each tool's cost with a measured return in dollars.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date. Put each tool on one project list with an owner and a go, hold or stop date."},{"id":"BUY-03","domain":"buyer","maps_to":"D8","anchor":"L4","step":"free","version":2,"text":"You set a date to decide whether to keep or stop each tool.","next_step":"Add up each tool's yearly cost, set the dollar return it must reach, and set a keep-or-stop date. Put each tool on one project list with an owner and a go, hold or stop date."},{"id":"PMO-01","domain":"oversight","maps_to":"D7","anchor":"L3","step":"free","version":1,"text":"You keep one list of every AI and IT project open now, with 1 owner for each.","next_step":"List every open AI and IT project, name 1 owner for each, and review the list with your leaders once a month."},{"id":"PMO-02","domain":"oversight","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"One person or group decides which new tools and projects start, hold or stop.","next_step":"List every open AI and IT project, name 1 owner for each, and review the list with your leaders once a month."},{"id":"PMO-03","domain":"oversight","maps_to":"D7","anchor":"L4","step":"free","version":1,"text":"Your leaders review each open project's status at a set time each month.","next_step":"List every open AI and IT project, name 1 owner for each, and review the list with your leaders once a month."},{"id":"SC-D1-01","maps_to":"D1","step":"scorecard","version":1,"kind":"statement","text":"Patients of each provider complete intake forms online before the visit."},{"id":"SC-D1-02","maps_to":"D1","step":"scorecard","version":1,"kind":"statement","text":"Each provider's schedule uses a waitlist to fill canceled slots."},{"id":"SC-D1-03","maps_to":"D1","step":"scorecard","version":1,"kind":"statement","text":"Each front desk role has a written procedure that staff train from."},{"id":"SC-D1-04","maps_to":"D1","step":"scorecard","version":1,"kind":"statement","text":"Each site has one named person who owns the schedule."},{"id":"SC-D1-05","maps_to":"D1","step":"scorecard","version":1,"kind":"poll","scored":false,"benchmark":"mgma_self_schedule","text":"About what share of your patients schedule their own visits online?","find_out":"Find out what share of your patients schedule their own visits online.","options":[{"value":"u25","label":"Under 25%","place":"Your answer puts you with the 71% of practices where under 25% of patients self-schedule."},{"value":"25-50","label":"25 to 50%","place":"Your answer puts you with the 21% of practices where 25 to 50% of patients self-schedule."},{"value":"51-75","label":"51 to 75%","place":"Your answer puts you with the 5% of practices where 51 to 75% of patients self-schedule."},{"value":"o75","label":"Over 75%","place":"Your answer puts you with the 3% of practices where over 75% of patients self-schedule."},{"value":"notsure","label":"Not sure","place":"Find out what share of your patients self-schedule to see where you stand."}]},{"id":"SC-D2-01","maps_to":"D2","step":"scorecard","version":1,"kind":"statement","text":"Each provider enters charges on the day of the visit."},{"id":"SC-D2-02","maps_to":"D2","step":"scorecard","version":1,"kind":"statement","text":"You track the clean claim rate for each payer every month."},{"id":"SC-D2-03","maps_to":"D2","step":"scorecard","version":1,"kind":"statement","text":"You know each major payer's share of your revenue."},{"id":"SC-D2-04","maps_to":"D2","step":"scorecard","version":1,"kind":"statement","text":"Each biller follows your written billing workflow."},{"id":"SC-D2-05","maps_to":"D2","step":"scorecard","version":1,"kind":"poll","scored":false,"benchmark":"mgma_rcm_automation","text":"In 2026, your revenue cycle is moving toward:","find_out":"Find out which way your revenue cycle is moving in 2026: more automation, no change or more manual work.","options":[{"value":"auto","label":"More automation","place":"Your answer puts you with the 63% of leaders who said more automation."},{"value":"same","label":"No major change","place":"Your answer puts you with the 26% of leaders who said no major change."},{"value":"manual","label":"More manual work","place":"Your answer puts you with the 11% of leaders who said more manual work."},{"value":"notsure","label":"Not sure","place":"Find out which way your revenue cycle is moving to see where you stand."}]},{"id":"SC-D3-01","maps_to":"D3","step":"scorecard","version":1,"kind":"statement","text":"You log each denial with its payer and reason."},{"id":"SC-D3-02","maps_to":"D3","step":"scorecard","version":1,"kind":"statement","text":"Staff work each denial within 30 days."},{"id":"SC-D3-03","maps_to":"D3","step":"scorecard","version":1,"kind":"statement","text":"Your denial report shows the denial rate for each payer."},{"id":"SC-D3-04","maps_to":"D3","step":"scorecard","version":1,"kind":"statement","text":"Each coder's work gets an audit at least once a year."},{"id":"SC-D3-05","maps_to":"D3","step":"scorecard","version":1,"kind":"poll","scored":false,"benchmark":"mgma_rcm_leak","text":"Where does your revenue cycle lose the most money?","find_out":"Find out where your revenue cycle loses the most money.","options":[{"value":"denials","label":"Denials and appeals","place":"Your answer puts you with the 48% of leaders who named denials and appeals."},{"value":"front","label":"Front end (registration and eligibility)","place":"Your answer puts you with the 23% of leaders who named the front end."},{"value":"billing","label":"Billing and collections","place":"Your answer puts you with the 14% of leaders who named billing and collections."},{"value":"coding","label":"Coding","place":"Your answer puts you with the 13% of leaders who named coding."},{"value":"posting","label":"Charge posting","place":"Your answer puts you with the 2% of leaders who named charge posting."},{"value":"notsure","label":"Not sure","place":"Find out where your revenue cycle loses the most money to see where you stand."}]},{"id":"SC-D4-01","maps_to":"D4","step":"scorecard","version":1,"kind":"statement","text":"Each department runs its standard reports straight from the EHR."},{"id":"SC-D4-02","maps_to":"D4","step":"scorecard","version":1,"kind":"statement","text":"Each key metric reaches your leaders in an automated report."},{"id":"SC-D4-03","maps_to":"D4","step":"scorecard","version":1,"kind":"statement","text":"Each outside result you rely on, such as labs, arrives in the EHR by interface."},{"id":"SC-D4-04","maps_to":"D4","step":"scorecard","version":1,"kind":"statement","text":"Staff use each EHR module your practice pays for."},{"id":"SC-D4-05","maps_to":"D4","step":"scorecard","version":1,"kind":"poll","scored":false,"benchmark":"mgma_workarounds","text":"How often do your clinicians use workarounds in the EHR or practice management system?","find_out":"Find out how often your clinicians use workarounds in the EHR or practice management system.","options":[{"value":"freq","label":"Frequently","place":"Your answer puts you with the 43% of leaders who said frequently."},{"value":"some","label":"Sometimes","place":"Your answer puts you with the 32% of leaders who said sometimes."},{"value":"rare","label":"Rarely","place":"Your answer puts you with the 16% of leaders who said rarely."},{"value":"never","label":"Never","place":"Your answer puts you with the 3% of leaders who said never."},{"value":"notsure","label":"Not sure","place":"Your answer puts you with the 6% of leaders who were not sure."}]},{"id":"SC-D5-01","maps_to":"D5","step":"scorecard","version":1,"kind":"statement","text":"Each digital tool has one named owner."},{"id":"SC-D5-02","maps_to":"D5","step":"scorecard","version":1,"kind":"statement","text":"Leaders wrote the goal for each AI project before it started."},{"id":"SC-D5-03","maps_to":"D5","step":"scorecard","version":1,"kind":"statement","text":"Each system you started in the past 3 years is in full use today."},{"id":"SC-D5-04","maps_to":"D5","step":"scorecard","version":1,"kind":"statement","text":"Each staff request for a new tool goes to one named person for review."},{"id":"SC-D5-05","maps_to":"D5","step":"scorecard","version":1,"kind":"poll","scored":false,"benchmark":"mgma_productivity_shares","text":"Has AI made your providers more productive in the past 2 years?","find_out":"Find out whether AI made your providers more productive in the past 2 years.","options":[{"value":"yes","label":"Yes","place":"Your answer puts you with the 46% of leaders who said yes."},{"value":"no","label":"No","place":"Your answer puts you with the 27% of leaders who said no."},{"value":"noai","label":"We use no AI","place":"Your answer puts you with the 13% of leaders who use no AI."},{"value":"notsure","label":"Not sure","place":"Your answer puts you with the 14% of leaders who were not sure."}]},{"id":"SC-D6-01","maps_to":"D6","step":"scorecard","version":1,"kind":"statement","text":"Each new hire follows a written onboarding plan."},{"id":"SC-D6-02","maps_to":"D6","step":"scorecard","version":1,"kind":"statement","text":"Each staff role gets training on a set schedule."},{"id":"SC-D6-03","maps_to":"D6","step":"scorecard","version":1,"kind":"statement","text":"Each department has a staff member who helps peers learn new systems."},{"id":"SC-D6-04","maps_to":"D6","step":"scorecard","version":1,"kind":"statement","text":"Each key role has a trained backup."},{"id":"SC-D6-05","maps_to":"D6","step":"scorecard","version":1,"kind":"poll","scored":false,"benchmark":"mgma_turnover","text":"Your staff turnover this year, against last year, is:","find_out":"Find out how your staff turnover this year compares with last year.","options":[{"value":"higher","label":"Higher","place":"Your answer puts you with the 29% of leaders who said higher."},{"value":"same","label":"About the same","place":"Your answer puts you with the 39% of leaders who said about the same."},{"value":"lower","label":"Lower","place":"Your answer puts you with the 30% of leaders who said lower."},{"value":"notsure","label":"Not sure","place":"Your answer puts you with the 2% of leaders who were not sure."}]},{"id":"SC-D7-01","maps_to":"D7","step":"scorecard","version":1,"kind":"statement","text":"Each project owner has the authority to make day-to-day decisions."},{"id":"SC-D7-02","maps_to":"D7","step":"scorecard","version":1,"kind":"statement","text":"Leaders decide on each new project request within 5 business days."},{"id":"SC-D7-03","maps_to":"D7","step":"scorecard","version":1,"kind":"statement","text":"Each project has a physician sponsor who meets its owner every month."},{"id":"SC-D7-04","maps_to":"D7","step":"scorecard","version":1,"kind":"statement","text":"Each project has a written escalation path."},{"id":"SC-D7-05","maps_to":"D7","step":"scorecard","version":1,"kind":"statement","text":"Each project of the past 2 years finished by its planned date."},{"id":"SC-D8-01","maps_to":"D8","step":"scorecard","version":1,"kind":"statement","text":"Each technology purchase draws on a set budget line."},{"id":"SC-D8-02","maps_to":"D8","step":"scorecard","version":1,"kind":"statement","text":"You know the yearly staff cost of each main workflow."},{"id":"SC-D8-03","maps_to":"D8","step":"scorecard","version":1,"kind":"statement","text":"You track the return on each technology purchase."},{"id":"SC-D8-04","maps_to":"D8","step":"scorecard","version":1,"kind":"statement","text":"Leaders approve each technology purchase through one written process."},{"id":"SC-D8-05","maps_to":"D8","step":"scorecard","version":1,"kind":"poll","scored":false,"benchmark":"mgma_operating_costs","text":"Your operating costs so far this year, against 2025, are:","find_out":"Find out how your operating costs this year compare with 2025.","options":[{"value":"higher","label":"Higher","place":"Your answer puts you with the 84% of leaders who said higher."},{"value":"same","label":"About the same","place":"Your answer puts you with the 8% of leaders who said about the same."},{"value":"lower","label":"Lower","place":"Your answer puts you with the 8% of leaders who said lower."},{"value":"notsure","label":"Not sure","place":"Find out how your operating costs compare with 2025 to see where you stand."}]}]},"scale":{"answers":{"all":100,"some":50,"none":0,"notsure":0},"mapping_rule":"Domain percent = average of All 100, Some 50, None 0, Not sure 0. Rubric level: 0% = 1, 1 to 49% = 2, 50 to 99% = 3, 100% = 4. Level 5 needs evidence, so only the Assessment can give it. A domain with half or more Not sure answers is Unknown and stays out of the average.","level_bands":[{"min":100,"level":4},{"min":50,"level":3},{"min":1,"level":2},{"min":0,"level":1}],"levels":{"1":"Critical Gap","2":"Significant Gap","3":"Functional Baseline","4":"Strong Foundation"},"unknown_label":"Unknown: find out first","tie_order":["governance","buyer","oversight","workflow","data","people"],"tiers":[{"min":3.5,"name":"Well-Positioned","explain":"Your practice has the basics in place to run its AI tools well.","decision":"Keep your tools. Pick the next task to hand to software, and measure it first."},{"min":2.5,"name":"Functional Baseline","explain":"Your practice has some basics in place, and some gaps that limit its AI tools.","decision":"Fix the 2 lowest domains in the next 90 days. Then decide which tools to keep or stop."},{"min":1.5,"name":"Significant Gaps","explain":"Your practice has gaps that put the value of its AI tools at risk.","decision":"Hold new AI purchases. Close the 2 lowest gaps first."},{"min":0,"name":"Critical State","explain":"Your practice is missing the basics that keep its AI tools safe and worth their cost.","decision":"Hold new AI purchases. Close the 2 lowest gaps first."}],"unknown_tier":{"name":"Unknown","explain":"You answered Not sure to half or more of the statements in every domain, so the check cannot score your practice yet.","decision":"Find out the answers in the list below. Then take the check again."},"review_first":{"question":"GOV-04","when":["none","notsure"],"domain":"First, staff review","next_step":"Make staff check AI output before it goes in the chart or to a payer. Put this rule in your AI use policy."},"benchmarks":{"mgma_ai_in_visits":{"line":"83% of practice leaders who answered an MGMA Stat poll say their practice uses AI in some patient visits, up from 71% a year earlier.","source":"MGMA Stat poll","date":"Aug 4, 2026","n":189,"url":"https://www.mgma.com/mgma-stat/ai-use-expands-leaders-shift-attention-to-measurement"},"mgma_productivity":{"line":"46% of practice leaders who answered an MGMA Stat poll say AI made their providers more productive. 14% are not sure, mostly because they cannot measure it.","source":"MGMA Stat poll","date":"May 12, 2026","n":257,"url":"https://mgma.com/mgma-stat/are-ai-tools-making-clinicians-more-productive-its-complicated","stat_id":"S0230"},"mgma_ai_policy":{"line":"20% of practice leaders who answered an MGMA Stat poll have AI governance or a formal AI policy. 22% are building one. 56% have none.","source":"MGMA Stat poll","date":"Jan 20, 2026","n":328,"url":"https://www.mgma.com/mgma-stat/ai-governance-in-medical-group-practices","place":{"question":"GOV-01","by_answer":{"all":"Your answer puts you with the 20% that have a formal AI policy.","some":"Your answer puts you near the 22% that are still building one.","none":"Your answer puts you with the 56% that have none.","notsure":"Find out whether your policy covers each tool to see where you stand."}},"stat_id":"S0215"},"mgma_role_redesign":{"line":"68% of practice leaders who answered an MGMA Stat poll have not redesigned a role or changed staffing with AI in the past year.","source":"MGMA Stat poll","date":"Jun 2, 2026","n":260,"url":"https://mgma.com/mgma-stat/ai-slowly-redesigning-work-rather-than-replacing-workers","place":{"question":"WRK-03","by_answer":{"all":"Your answer puts you outside the 68% that have not.","some":"Your answer puts you outside the 68% that have not.","none":"Your answer puts you with the 68% that have not.","notsure":"Find out whether you changed a staff role around each tool to see where you stand."}},"stat_id":"S0233"},"mgma_work_shift":{"line":"When practice leaders who answered an MGMA Stat poll describe what AI did to staff work, 37% say it shifted work to other tasks and 29% say it reduced work.","source":"MGMA Stat poll","date":"Aug 4, 2026","n":189,"url":"https://www.mgma.com/mgma-stat/ai-use-expands-leaders-shift-attention-to-measurement","place":{"question":"BUY-02","by_answer":{"all":"You compared each tool's cost with a measured return, so you can say which group your practice is in.","some":"You have not compared every tool's cost with a measured return, so you cannot yet say which group your practice is in.","none":"You have not compared any tool's cost with a measured return, so you cannot yet say which group your practice is in.","notsure":"Find out whether anyone compared each tool's cost with a measured return."}}},"mgma_access_targets":{"line":"Practice leaders who answered an MGMA Stat poll named where they are turning to AI and automation to improve access: scheduling 31%, calls 27%, registration and eligibility 23%, prior authorization 16%.","source":"MGMA Stat poll","date":"Feb 10, 2026","n":177,"url":"https://www.mgma.com/mgma-stat/automatic-for-the-people-ai-for-front-office-access"},"mgma_self_schedule":{"line":"Asked what share of their patients schedule their own visits online, practice leaders who answered an MGMA Stat poll answered: under 25% at 71% of practices, 25 to 50% at 21%, 51 to 75% at 5%, over 75% at 3%.","source":"MGMA Stat poll","date":"Jul 29, 2025","n":244,"url":"https://www.mgma.com/mgma-stat/meeting-pressure-on-patient-digital-self-scheduling","stat_id":"S0192"},"mgma_portal_cover":{"line":"71% of practice leaders who answered an MGMA Stat poll have someone designated to handle other providers' portal messages. 24% do not, 1% are not sure, and 4% have no portal.","source":"MGMA Stat poll","date":"Oct 27, 2026","n":238,"url":"https://www.mgma.com/mgma-stat/who-owns-the-inbox-how-medical-groups-can-redesign-portal-message-work","stat_id":"S0252"},"mgma_rcm_automation":{"line":"Asked where their revenue cycle is heading in 2026, 63% of practice leaders who answered an MGMA Stat poll said more automation, 26% no major change and 11% more manual work.","source":"MGMA Stat poll","date":"Oct 20, 2026","n":214,"url":"https://www.mgma.com/mgma-stat/medical-groups-add-rcm-automation-over-payer-demands","stat_id":"S0251"},"mgma_ai_coding":{"line":"33% of practice leaders who answered an MGMA Stat poll use AI for coding, charge review or both (coding 9%, charge review 4%, both 20%). 68% use neither. MGMA's shares add to 101% because of rounding.","source":"MGMA Stat poll","date":"Apr 7, 2026","n":256,"url":"https://www.mgma.com/mgma-stat/before-you-buy-evaluating-ai-for-coding-and-charge-review-in-your-practice","stat_id":"S0225"},"mgma_rcm_leak":{"line":"Practice leaders who answered an MGMA Stat poll named their biggest revenue cycle leak: denials and appeals 48%, front end 23%, billing and collections 14%, coding 13%, charge posting 2%.","source":"MGMA Stat poll","date":"Jan 6, 2026","n":288,"url":"https://www.mgma.com/mgma-stat/detecting-and-fixing-leaks-across-the-revenue-cycle","stat_id":"S0213"},"mgma_prior_auth":{"line":"44% of practice leaders who answered an MGMA Stat poll say prior authorization turnaround is slower in 2026 than in 2025. 40% say it is the same, 7% faster, and 9% are not sure.","source":"MGMA Stat poll","date":"Sep 1, 2026","n":178,"url":"https://www.mgma.com/mgma-stat/fewer-than-1-in-10-see-prior-auth-turnarounds-faster","stat_id":"S0246"},"mgma_workarounds":{"line":"75% of practice leaders who answered an MGMA Stat poll say their clinicians use EHR or practice management workarounds: 43% frequently and 32% sometimes. 16% said rarely, 3% never, and 6% were not sure.","source":"MGMA Stat poll","date":"Jul 21, 2026","n":216,"url":"https://www.mgma.com/mgma-stat/ehr-and-pm-workarounds-reveal-the-hidden-cost-of-broken-workflows","stat_id":"S0240"},"mgma_cyber":{"line":"19% of practice leaders who answered an MGMA Stat poll are very confident they could recover quickly from a cyberattack. 61% are somewhat confident and 21% are not confident. MGMA's shares add to 101% because of rounding.","source":"MGMA Stat poll","date":"Oct 6, 2026","n":238,"url":"https://www.mgma.com/mgma-stat/only-19-of-practice-leaders-are-very-confident-they-could-recover-quickly-from-a-cyberattack","stat_id":"S0249"},"mgma_turnover":{"line":"Asked about staff turnover against last year, practice leaders who answered an MGMA Stat poll said about the same 39%, lower 30%, higher 29% and not sure 2%.","source":"MGMA Stat poll","date":"May 26, 2026","n":303,"url":"https://www.mgma.com/mgma-stat/stabilized-but-not-solved-staff-turnover-in-2026","stat_id":"S0232"},"mgma_ma_hiring":{"line":"56% of practice leaders who answered an MGMA Stat poll say hiring medical assistants got harder in the past year. 37% say it stayed the same and 7% say it got easier.","source":"MGMA Stat poll","date":"May 19, 2026","n":297,"url":"https://www.mgma.com/mgma-stat/medical-assistants-tackling-practices-worst-hiring-problem","stat_id":"S0231"},"mgma_operating_costs":{"line":"84% of practice leaders who answered an MGMA Stat poll report higher operating costs so far in 2026 than in 2025. 8% report the same and 8% lower.","source":"MGMA Stat poll","date":"Jun 23, 2026","n":251,"url":"https://www.mgma.com/mgma-stat/operating-costs-keep-climbing-for-medical-practices-in-2026","stat_id":"S0236"},"mgma_rate_increase":{"line":"29% of practice leaders who answered an MGMA Stat poll got a commercial payer rate increase within the past year. 17% got their last one 1 to 2 years ago, 50% 3 or more years ago, and 4% said it does not apply.","source":"MGMA Stat poll","date":"Aug 25, 2026","n":203,"url":"https://www.mgma.com/mgma-stat/most-medical-groups-have-gone-years-without-a-commercial-payer-rate-increase","stat_id":"S0245"},"mgma_productivity_shares":{"line":"Asked whether AI made their providers more productive in the past 2 years, 46% of practice leaders who answered an MGMA Stat poll said yes, 27% no and 14% not sure. 13% use no AI.","source":"MGMA Stat poll","date":"May 12, 2026","n":257,"url":"https://mgma.com/mgma-stat/are-ai-tools-making-clinicians-more-productive-its-complicated","stat_id":"S0230"}},"neutral_line":"We sell no AI products and take no vendor fees. We bill only for our time.","next_step_offer":"The ScoreCard gives a level for all 8 detailed domains and shows public MGMA poll figures beside each. $600, credited in full to the Assessment. The Assessment finds what to fix first. Common fixes are a project list and 90-day roadmap for your practice, or an AI assistant built for one task."},"setup":{"id":"scorecard","name":"Practice ScoreCard","template":"template_scorecard.html","runner":"runner_scorecard.js","question":"Where does your practice stand in the 8 areas that decide whether an AI project pays off?","intro":"63 short statements in 8 domains. It takes about 25 to 30 minutes, or about 15 to 20 if your free check answers are filled in. Your answers save in this browser as you go.","prefilled_line":"Your Free Practice Check answers are filled in. Check them and change any that changed.","answer_prompt":"For each statement, pick how much of your practice it is true for.","free_label":"From your free check","number_hint":"Optional. The Assessment uses it. It does not change your level.","level_name":"Self-reported level","choices":[["all","All"],["some","Some"],["none","None"],["notsure","Not sure"]],"count":{"text":"How many AI tools does your practice use? Include free tools staff use on their own.","options":[{"value":"none","label":"None"},{"value":"1","label":"1"},{"value":"2-3","label":"2 to 3"},{"value":"4+","label":"4 or more"},{"value":"notsure","label":"Not sure"}],"notsure_find_out":"List every AI tool your staff use, including free ones."},"free_questions":["GOV-01","GOV-05","GOV-02","GOV-03","GOV-04","GOV-06","GOV-07","GOV-08","WRK-01","WRK-02","WRK-03","DAT-01","DAT-02","DAT-03","PPL-01","PPL-04","PPL-03","BUY-01","BUY-02","BUY-03","PMO-01","PMO-02","PMO-03"],"none_free":["PMO-01","PMO-02","PMO-03"],"find_out_prefix":"Find out whether ","no_ai_note":"Your practice uses no AI tools yet. The rubric puts that at Level 1 for this domain, so the Assessment starts here.","domains":[{"key":"D1","name":"Front office operations","main":"mgma_self_schedule","context":"mgma_portal_cover","number":{"id":"NUM-D1","label":"Appointment fill rate (%)","kind":"pct"},"next_step":"Pick 1 provider's schedule. Turn on online intake and a waitlist for it, and write the front desk procedure for it.","assess_next":"Fill rate, portal use and new-patient wait, from your scheduling reports and staff roster."},{"key":"D2","name":"Revenue operations","main":"mgma_rcm_automation","context":"mgma_ai_coding","number":{"id":"NUM-D2","label":"Days in A/R","kind":"num"},"next_step":"Make same-day charge entry the rule, and start a monthly clean claim report for each payer.","assess_next":"Clean claim rate, days in A/R and charge lag, from your A/R aging report by payer and your charge summary."},{"key":"D3","name":"Denial management","main":"mgma_rcm_leak","context":"mgma_prior_auth","number":{"id":"NUM-D3","label":"Denial rate (%)","kind":"pct"},"next_step":"Start a denial log with payer and reason, and set a 30-day limit to work each denial.","assess_next":"Denial rate by payer, follow-up time and write-offs, from 90 days of denial reports."},{"key":"D4","name":"Technology infrastructure","main":"mgma_workarounds","context":"mgma_cyber","number":{"id":"NUM-D4","label":"Active EHR integrations (count)","kind":"num"},"next_step":"List the reports your leaders need each month and the EHR modules you pay for. Ask your EHR vendor which reports can run on their own.","assess_next":"EHR use, reports and active integrations, from your EHR use export and vendor contract."},{"key":"D5","name":"AI and digital tool adoption","main":"mgma_productivity_shares","context":"mgma_role_redesign","number":{"id":"NUM-D5","label":"Staff who use your main AI tool each week (%)","kind":"pct"},"next_step":"Name 1 owner for each digital tool, and write the goal each AI project must reach.","assess_next":"Tool use against each tool's goal, from staff interviews and your vendor contract list."},{"key":"D6","name":"Staff readiness","main":"mgma_turnover","context":"mgma_ma_hiring","number":{"id":"NUM-D6","label":"Staff turnover in the last 12 months (%)","kind":"pct"},"next_step":"Write a 1-page onboarding plan, name a trained backup for each key role, and pick 1 peer helper in each department.","assess_next":"Turnover, training and past rollouts, from staff interviews and your staff roster."},{"key":"D7","name":"Leadership and governance","main":"mgma_ai_policy","main_question":"GOV-01","context":null,"sub_lines":{"free":"AI governance","new":"Leadership"},"number":{"id":"NUM-D7","label":"Days from a project request to a decision","kind":"num"},"next_step":"Name 1 owner for each open project, set a 5-day decision rule, and write who problems go to.","assess_next":"Who owns projects, how fast decisions come and how past projects ended, from interviews with your leaders."},{"key":"D8","name":"Financial health","main":"mgma_operating_costs","context":"mgma_rate_increase","number":{"id":"NUM-D8","label":"Write-offs as a share of gross charges (%)","kind":"pct"},"next_step":"Give technology its own budget line, and count the staff time your costliest workflow takes.","assess_next":"Revenue leakage in dollars, from your A/R aging, denial and charge reports, and your technology budget."}],"tie_order":["D7","D8","D3","D2","D1","D4","D5","D6"],"gap_count":3,"tiers":[{"min":3.5,"name":"Well-Positioned","explain":"Your practice reports the basics in place in most domains.","decision":"Close the 3 lowest domains in the next 90 days. Then measure the first task you want to hand to software."},{"min":2.5,"name":"Functional Baseline","explain":"Your practice reports some basics in place, and gaps that would slow an AI project.","decision":"Fix the 3 lowest domains in the next 90 days, before you add tools."},{"min":1.5,"name":"Significant Gaps","explain":"Your practice reports gaps in its operations that an AI tool would not fix.","decision":"Hold new AI purchases. Close the 3 lowest gaps first."},{"min":0,"name":"Critical State","explain":"Your practice reports missing basics in most domains.","decision":"Hold new AI purchases. Steady the 3 lowest domains first."}],"unknown_tier":{"name":"Unknown","explain":"You answered Not sure to half or more of the statements in every domain, so the ScoreCard cannot give a level yet.","decision":"Find out the answers in the list below. Then take the ScoreCard again."},"level_note":"Levels come from your own answers. The Assessment checks each level against your reports and can give Level 5.","prefill":{"current":"1","versions":{"1":{"order":["GOV-01","GOV-05","GOV-02","GOV-03","GOV-04","GOV-06","GOV-07","GOV-08","WRK-01","WRK-02","WRK-03","DAT-01","DAT-02","DAT-03","PPL-01","PPL-04","PPL-03","BUY-01","BUY-02","BUY-03","PMO-01","PMO-02","PMO-03"],"rows":{"GOV-01":4,"GOV-05":1,"GOV-02":2,"GOV-03":2,"GOV-04":2,"GOV-06":1,"GOV-07":1,"GOV-08":1,"WRK-01":3,"WRK-02":3,"WRK-03":2,"DAT-01":3,"DAT-02":3,"DAT-03":2,"PPL-01":3,"PPL-04":1,"PPL-03":2,"BUY-01":3,"BUY-02":3,"BUY-03":2,"PMO-01":1,"PMO-02":1,"PMO-03":1}}}},"hubspot":{"portal":"245756389","form":"12845976-c08a-4641-b497-8bf4c5875bd9"},"contact":{"heading":"Enter your details to see your ScoreCard","fields":[["firstname","First name","given-name"],["lastname","Last name","family-name"],["company","Practice name","organization"],["email","Email","email"]],"privacy":"Your details go to Beacon IT Advisory only. No list, no sharing.","error":"Your ScoreCard did not save. Your report shows below. Please tell the person who sent you this link."},"footer":"Beacon IT Advisory · This page saves your answers, the numbers you enter, your result and your contact details so Beacon can follow up. It asks for no patient information. Every number field is optional. Until you submit, your answers stay only in this browser."},"build":"2026-11-14 15:17"};</script>
+<script>// Free-tool scoring engine. Pure functions, no DOM. Shared by the page and the test script.
+// Spec: outputs/design_181_free-tool-engine_2026-11-04.md (vault), sections 1 and 2.
+var Engine = (function () {
+  function lowerFirst(s) { return s.charAt(0).toLowerCase() + s.slice(1); }
+
+  function score(bank, scale, setup, answers) {
+    var count = answers.COUNT;
+    var opt = setup.count.options.filter(function (o) { return o.value === count; })[0];
+    if (!opt) throw new Error("Missing answer: COUNT");
+    var none = count === "none";
+    // "None" tools: short path, only the project oversight statements (ruling 84).
+    var active = none ? setup.none_questions : setup.questions;
+    var taskOpt = setup.task.options.filter(function (o) { return o.value === answers.TASK; })[0];
+    if (!taskOpt) throw new Error("Missing answer: TASK");
+    var tb = scale.benchmarks[setup.task.benchmark];
+    if (!tb) throw new Error("Unknown benchmark key: " + setup.task.benchmark);
+    var task = { heading: setup.task.heading, label: taskOpt.label, line: taskOpt.line, peer: tb };
+    var byId = {};
+    bank.questions.forEach(function (q) { byId[q.id] = q; });
+    var domainInfo = {};
+    bank.domains.forEach(function (d) { domainInfo[d.key] = d; });
+
+    // Domains in the order the setup lists their questions.
+    var order = [], doms = {};
+    active.forEach(function (id) {
+      var q = byId[id];
+      if (!q) throw new Error("Unknown question id: " + id);
+      if (!doms[q.domain]) {
+        doms[q.domain] = { key: q.domain, name: domainInfo[q.domain].name, points: 0, notSure: 0,
+                           questions: [], next_step: q.next_step };
+        order.push(q.domain);
+      }
+      var a = answers[id];
+      if (!(a in scale.answers)) throw new Error("Missing answer: " + id);
+      doms[q.domain].questions.push(q);
+      doms[q.domain].points += scale.answers[a]; // "Not sure" scores as None.
+      if (a === "notsure") doms[q.domain].notSure++;
+    });
+
+    var domains = order.map(function (k) {
+      var d = doms[k], n = d.questions.length;
+      d.percent = Math.round(d.points / n);
+      d.unknown = d.notSure * 2 >= n;
+      if (d.unknown) { d.level = null; d.label = scale.unknown_label; }
+      else {
+        d.level = scale.level_bands.filter(function (b) { return d.percent >= b.min; })[0].level;
+        d.label = scale.levels[String(d.level)];
+      }
+      d.rank = scale.tie_order.indexOf(k);
+      return d;
+    });
+
+    var scored = domains.filter(function (d) { return !d.unknown; });
+    var average = null, tier = scale.unknown_tier;
+    if (scored.length) {
+      var sum = scored.reduce(function (s, d) { return s + d.level; }, 0);
+      average = Math.round((sum / scored.length) * 10) / 10;
+      tier = scale.tiers.filter(function (t) { return average >= t.min; })[0];
+    }
+
+    // 2 lowest scored domains by percent; ties follow the fixed tie order.
+    var lowest = scored.slice().sort(function (a, b) {
+      return (a.percent - b.percent) || (a.rank - b.rank);
+    }).slice(0, 2);
+
+    var plan = lowest.map(function (d) { return { domain: d.name, next_step: d.next_step }; });
+    var rf = scale.review_first;
+    if (rf.when.indexOf(answers[rf.question]) >= 0) plan.unshift({ domain: rf.domain, next_step: rf.next_step });
+
+    var findOut = active.filter(function (id) { return answers[id] === "notsure"; })
+      .map(function (id) { return setup.find_out_prefix + lowerFirst(byId[id].text); });
+    if (count === "notsure") findOut.unshift(setup.count.notsure_find_out);
+
+    // One peer line for each of the 2 lowest domains that has one, with a line that places the answer.
+    var peers = lowest.filter(function (d) { return domainInfo[d.key].benchmark; }).map(function (d) {
+      var b = scale.benchmarks[domainInfo[d.key].benchmark];
+      if (!b) throw new Error("Unknown benchmark key: " + domainInfo[d.key].benchmark);
+      return Object.assign({}, b, { placement: b.place ? b.place.by_answer[answers[b.place.question]] : null });
+    });
+    var top = setup.top_benchmarks.map(function (k) {
+      if (!scale.benchmarks[k]) throw new Error("Unknown benchmark key: " + k);
+      return scale.benchmarks[k];
+    });
+
+    return { none: none, message: none ? setup.count.none_message : null, questions: active, task: task,
+             headline: opt.headline, neutral: scale.neutral_line, average: average, tier: tier,
+             domains: domains, plan: plan, findOut: findOut, peers: peers, top: top, offer: scale.next_step_offer };
+  }
+  // HubSpot form body: the 4 contact fields, the result ID and 1 text summary. No free text beyond the contact.
+  // Throws on a missing name or practice, a bad email or an answer outside the allowed values.
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  function hubspotBody(setup, scale, result, answers, resultId, contact, meta) {
+    contact = contact || {};
+    ["firstname", "lastname", "company"].forEach(function (k) {
+      if (!contact[k] || !String(contact[k]).trim()) throw new Error("Missing contact field: " + k);
+    });
+    if (!EMAIL.test(String(contact.email || "").trim())) throw new Error("Bad email");
+    if (!/^[a-z0-9]{6,}$/.test(resultId)) throw new Error("Bad result ID");
+    var counts = setup.count.options.map(function (o) { return o.value; });
+    if (counts.indexOf(answers.COUNT) < 0) throw new Error("Bad count answer");
+    var tasks = setup.task.options.map(function (o) { return o.value; });
+    if (tasks.indexOf(answers.TASK) < 0) throw new Error("Bad task answer");
+    var parts = ["time=" + meta.time, "build=" + meta.build, "count=" + answers.COUNT, "task=" + answers.TASK];
+    {
+      parts.push("answers=" + result.questions.map(function (id) {
+        if (!(answers[id] in scale.answers)) throw new Error("Bad answer: " + id);
+        return id + ":" + answers[id];
+      }).join(","));
+      parts.push("domains=" + result.domains.map(function (d) {
+        return d.name + ":" + (d.unknown ? "Unknown" : d.percent + "%:L" + d.level);
+      }).join(","));
+      parts.push("average=" + (result.average === null ? "none" : result.average.toFixed(1)));
+      parts.push("tier=" + (result.none ? "None" : result.tier.name));
+    }
+    var f = function (name, value) { return { objectTypeId: "0-1", name: name, value: String(value).trim() }; };
+    return { fields: [f("firstname", contact.firstname), f("lastname", contact.lastname), f("company", contact.company),
+                      f("email", contact.email), f("fpc_result_id", resultId), f("fpc_result", parts.join(" | "))] };
+  }
+  // ---- #408 ScoreCard (design outputs/design_408-scorecard_2026-11-14.md, Gate 1 and 3 rulings) ----
+  // Rows: the 23 free rows (scored in the domain their maps_to names) plus the 40 step: scorecard rows.
+  // Poll rows (kind: poll) mirror an MGMA poll; they place the practice and are not scored.
+  function scRows(bank, sc, count) {
+    var free = count === "none" ? sc.none_free : sc.free_questions;
+    var neu = bank.questions.filter(function (q) { return q.step === "scorecard"; }).map(function (q) { return q.id; });
+    return free.concat(neu);
+  }
+  function scoreCard(bank, scale, sc, answers) {
+    var count = answers.COUNT;
+    if (!sc.count.options.some(function (o) { return o.value === count; })) throw new Error("Missing answer: COUNT");
+    var byId = {};
+    bank.questions.forEach(function (q) { byId[q.id] = q; });
+    var ids = scRows(bank, sc, count), doms = {};
+    sc.domains.forEach(function (d) {
+      doms[d.key] = { key: d.key, name: d.name, info: d, points: 0, n: 0, notSure: 0,
+                      free: { points: 0, n: 0 }, neu: { points: 0, n: 0 }, held: [], poll: null };
+    });
+    var findOut = [];
+    if (count === "notsure") findOut.push(sc.count.notsure_find_out);
+    ids.forEach(function (id) {
+      var q = byId[id];
+      if (!q) throw new Error("Unknown question id: " + id);
+      var d = doms[q.maps_to], a = answers[id];
+      if (!d) throw new Error("Unknown domain for " + id);
+      if (q.kind === "poll") {
+        var o = q.options.filter(function (x) { return x.value === a; })[0];
+        if (!o) throw new Error("Missing answer: " + id);
+        d.poll = { question: q.text, answer: o.label, placement: o.place };
+        if (a === "notsure") findOut.push(q.find_out);
+        return;
+      }
+      if (!(a in scale.answers)) throw new Error("Missing answer: " + id);
+      var v = scale.answers[a], part = q.step === "free" ? d.free : d.neu;
+      d.points += v; d.n++; part.points += v; part.n++;
+      if (a === "notsure") { d.notSure++; findOut.push(sc.find_out_prefix + lowerFirst(q.text)); }
+      if (a === "none") d.held.push(q.text);
+    });
+    var domains = sc.domains.map(function (info) {
+      var d = doms[info.key];
+      d.percent = Math.round(d.points / d.n);
+      d.fromFree = d.free.n ? Math.round(d.free.points / d.free.n) : null;
+      d.fromNew = d.neu.n ? Math.round(d.neu.points / d.neu.n) : null;
+      d.unknown = d.notSure * 2 >= d.n;
+      if (d.unknown) { d.level = null; d.label = scale.unknown_label; }
+      else {
+        d.level = scale.level_bands.filter(function (b) { return d.percent >= b.min; })[0].level;
+        d.label = scale.levels[String(d.level)];
+      }
+      d.rank = sc.tie_order.indexOf(info.key);
+      // MGMA lines: the main poll with its placing sentence, and the second poll as context only.
+      d.main = scale.benchmarks[info.main];
+      if (!d.main) throw new Error("Unknown benchmark key: " + info.main);
+      if (info.main_question) {
+        d.placement = ids.indexOf(info.main_question) >= 0 ? d.main.place.by_answer[answers[info.main_question]] : null;
+      } else d.placement = d.poll ? d.poll.placement : null;
+      d.context = info.context ? scale.benchmarks[info.context] : null;
+      if (info.context && !d.context) throw new Error("Unknown benchmark key: " + info.context);
+      var num = answers[info.number.id];
+      if (num != null && num !== "") {
+        num = Number(num);
+        if (!isFinite(num) || num < 0 || (info.number.kind === "pct" && num > 100)) throw new Error("Bad number: " + info.number.id);
+        d.number = { label: info.number.label, value: num };
+      } else d.number = null;
+      d.note = info.key === "D5" && count === "none" ? sc.no_ai_note : null;
+      d.next_step = info.next_step; d.assess_next = info.assess_next;
+      if (info.sub_lines) d.subLines = [[info.sub_lines.free, d.fromFree], [info.sub_lines.new, d.fromNew]];
+      delete d.points; delete d.free; delete d.neu; delete d.info;
+      return d;
+    });
+    var scored = domains.filter(function (d) { return !d.unknown; });
+    var average = null, tier = sc.unknown_tier;
+    if (scored.length) {
+      average = Math.round(scored.reduce(function (s, d) { return s + d.level; }, 0) / scored.length * 10) / 10;
+      tier = sc.tiers.filter(function (t) { return average >= t.min; })[0];
+    }
+    var gaps = scored.slice().sort(function (a, b) { return (a.percent - b.percent) || (a.rank - b.rank); }).slice(0, sc.gap_count);
+    var plan = gaps.map(function (d) { return { key: d.key, domain: d.name, next_step: d.next_step, assess_next: d.assess_next }; });
+    var rf = scale.review_first;
+    if (ids.indexOf(rf.question) >= 0 && rf.when.indexOf(answers[rf.question]) >= 0)
+      plan.unshift({ key: null, domain: rf.domain, next_step: rf.next_step, assess_next: null });
+    return { count: count, questions: ids, domains: domains, average: average, tier: tier,
+             gaps: gaps.map(function (d) { return d.key; }), plan: plan, findOut: findOut, neutral: scale.neutral_line };
+  }
+
+  // Prefill code (Gate 3 ruling 3-1): version . tool count . 1 letter per free row. It lives after # only.
+  var COUNT_CODE = { "none": "n", "1": "1", "2-3": "2", "4+": "4", "notsure": "u" };
+  var ANS_CODE = { all: "a", some: "s", none: "n", notsure: "u" };
+  function invert(o) { var r = {}; Object.keys(o).forEach(function (k) { r[o[k]] = k; }); return r; }
+  function encodePrefill(version, order, answers) {
+    var cc = COUNT_CODE[answers.COUNT];
+    if (!cc) throw new Error("Bad count answer");
+    return "p=" + version + "." + cc + "." + order.map(function (id) { return ANS_CODE[answers[id]] || "x"; }).join("");
+  }
+  // Returns { answers, prefilled } or null. A bad or unknown code returns null, so the page opens empty.
+  function decodePrefill(bank, sc, hash) {
+    var m = /^#?p=(\d+)\.([n124u])\.([asnux]+)$/.exec(String(hash || ""));
+    if (!m) return null;
+    var ver = sc.prefill.versions[m[1]];
+    if (!ver || m[3].length !== ver.order.length) return null;
+    var count = invert(COUNT_CODE)[m[2]], ans = invert(ANS_CODE), cur = {};
+    bank.questions.forEach(function (q) { cur[q.id] = q.version; });
+    var allowed = count === "none" ? sc.none_free : sc.free_questions;
+    var out = { COUNT: count }, prefilled = [];
+    ver.order.forEach(function (id, i) {
+      var a = ans[m[3].charAt(i)];
+      if (!a || allowed.indexOf(id) < 0 || ver.rows[id] !== cur[id]) return; // a changed row is answered again
+      if (a === "some" && count === "1" && sc.none_free.indexOf(id) < 0) return;
+      out[id] = a; prefilled.push(id);
+    });
+    return { answers: out, prefilled: prefilled };
+  }
+  function scorecardBody(sc, scale, result, answers, resultId, contact, meta) {
+    contact = contact || {};
+    ["firstname", "lastname", "company"].forEach(function (k) {
+      if (!contact[k] || !String(contact[k]).trim()) throw new Error("Missing contact field: " + k);
+    });
+    if (!EMAIL.test(String(contact.email || "").trim())) throw new Error("Bad email");
+    if (!/^[a-z0-9]{6,}$/.test(resultId)) throw new Error("Bad result ID");
+    var parts = ["product=scorecard", "time=" + meta.time, "build=" + meta.build, "prefilled=" + (meta.prefilled ? "yes" : "no"),
+                 "count=" + result.count,
+                 "answers=" + result.questions.map(function (id) { return id + ":" + answers[id]; }).join(","),
+                 "numbers=" + result.domains.filter(function (d) { return d.number; }).map(function (d) { return d.key + ":" + d.number.value; }).join(","),
+                 "domains=" + result.domains.map(function (d) { return d.key + ":" + (d.unknown ? "Unknown" : d.percent + "%:L" + d.level); }).join(","),
+                 "average=" + (result.average === null ? "none" : result.average.toFixed(1)), "tier=" + result.tier.name];
+    var f = function (name, value) { return { objectTypeId: "0-1", name: name, value: String(value).trim() }; };
+    return { fields: [f("firstname", contact.firstname), f("lastname", contact.lastname), f("company", contact.company),
+                      f("email", contact.email), f("fpc_result_id", resultId), f("fpc_result", parts.join(" | "))] };
+  }
+
+  return { score: score, hubspotBody: hubspotBody, scRows: scRows, scoreCard: scoreCard,
+           encodePrefill: encodePrefill, decodePrefill: decodePrefill, scorecardBody: scorecardBody };
+})();
+if (typeof module !== "undefined") module.exports = Engine;
+</script>
+<script>// ScoreCard page runner (#408): draws the 63 statements by domain, prefills from the free result link,
+// keeps a draft in this browser, and shows the 8-section report. Scoring lives in engine.js.
+(function () {
+  var DATA = window.FREE_TOOL_DATA;
+  var bank = DATA.bank, scale = DATA.scale, sc = DATA.setup;
+  var byId = {};
+  bank.questions.forEach(function (q) { byId[q.id] = q; });
+  var DRAFT = "beacon-scorecard-draft";
+  var resultId = Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+  var HUBSPOT_URL = "https://api.hsforms.com/submissions/v3/integration/submit/" + sc.hubspot.portal + "/" + sc.hubspot.form;
+  var perTool = sc.free_questions.filter(function (id) { return sc.none_free.indexOf(id) < 0; });
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function store(fn) { try { return fn(window.localStorage); } catch (e) { return null; } }
+
+  // Answers: the prefill link first, then any draft saved in this browser on top.
+  var answers = {}, prefilled = false;
+  var pre = Engine.decodePrefill(bank, sc, location.hash);
+  if (pre) { answers = pre.answers; prefilled = pre.prefilled.length > 0; }
+  var draft = store(function (s) { return JSON.parse(s.getItem(DRAFT) || "null"); });
+  if (draft && typeof draft === "object") Object.keys(draft).forEach(function (k) { answers[k] = draft[k]; });
+  function saveDraft() { store(function (s) { s.setItem(DRAFT, JSON.stringify(answers)); }); }
+
+  document.title = sc.name;
+  document.getElementById("tool-name").textContent = sc.name;
+  document.getElementById("tool-question").textContent = sc.question;
+  document.getElementById("tool-intro").textContent = sc.intro;
+  document.getElementById("answer-prompt").textContent = sc.answer_prompt;
+  document.getElementById("footer").textContent = sc.footer;
+  if (prefilled) { var pl = document.getElementById("prefilled"); pl.textContent = sc.prefilled_line; pl.hidden = false; }
+
+  function radioGroup(name, label, options, onPick) {
+    var g = el("div", "choices");
+    g.setAttribute("role", "radiogroup");
+    g.setAttribute("aria-label", label);
+    options.forEach(function (o) {
+      var lab = el("label", "choice");
+      var input = document.createElement("input");
+      input.type = "radio"; input.name = name; input.value = o[0];
+      input.checked = answers[name] === o[0];
+      input.addEventListener("change", function () { answers[name] = o[0]; onPick(o[0]); saveDraft(); update(); });
+      lab.appendChild(input);
+      lab.appendChild(el("span", null, o[1]));
+      g.appendChild(lab);
+    });
+    return g;
+  }
+
+  // Tool count: decides which free rows show, and hides "Some" on AI-tool rows for 1 tool.
+  var countBox = document.getElementById("count");
+  countBox.appendChild(el("p", "statement-text count-text", sc.count.text));
+  countBox.appendChild(radioGroup("COUNT", "Number of AI tools", sc.count.options.map(function (o) { return [o.value, o.label]; }), applyCount));
+
+  var box = document.getElementById("domains"), n = 0;
+  sc.domains.forEach(function (d) {
+    box.appendChild(el("h2", "domain-head", d.key + " " + d.name));
+    var ol = el("ol", "statements");
+    ol.style.listStyle = "none"; ol.style.padding = "0";
+    var ids = sc.free_questions.filter(function (id) { return byId[id].maps_to === d.key; })
+      .concat(bank.questions.filter(function (q) { return q.step === "scorecard" && q.maps_to === d.key; }).map(function (q) { return q.id; }));
+    ids.forEach(function (id) {
+      var q = byId[id], li = el("li", "statement");
+      li.dataset.id = id;
+      var p = el("p", "statement-text", (++n) + ". " + q.text);
+      if (q.step === "free") p.appendChild(el("span", "free-tag", sc.free_label));
+      li.appendChild(p);
+      var opts = q.kind === "poll" ? q.options.map(function (o) { return [o.value, o.label]; }) : sc.choices;
+      li.appendChild(radioGroup(id, "Statement " + n, opts, function () {}));
+      ol.appendChild(li);
+    });
+    // Up to 1 optional number per domain (ruling 5).
+    var nl = el("li", "statement number");
+    var lab = el("label", null);
+    lab.appendChild(el("p", "statement-text", d.number.label));
+    var inp = document.createElement("input");
+    inp.type = "number"; inp.min = "0"; inp.step = "any"; inp.name = d.number.id;
+    if (d.number.kind === "pct") inp.max = "100";
+    if (answers[d.number.id] != null) inp.value = answers[d.number.id];
+    inp.addEventListener("input", function () {
+      if (inp.value === "") delete answers[d.number.id]; else answers[d.number.id] = inp.value;
+      saveDraft(); update();
+    });
+    lab.appendChild(inp);
+    nl.appendChild(lab);
+    nl.appendChild(el("p", "source", sc.number_hint));
+    ol.appendChild(nl);
+    box.appendChild(ol);
+  });
+
+  function applyCount() {
+    var none = answers.COUNT === "none", one = answers.COUNT === "1";
+    perTool.forEach(function (id) {
+      var li = box.querySelector('li[data-id="' + id + '"]');
+      li.hidden = none;
+      var some = li.querySelector('input[value="some"]');
+      some.parentNode.hidden = one;
+      if (one && some.checked) { some.checked = false; delete answers[id]; }
+    });
+  }
+
+  var contact = {};
+  document.getElementById("contact-heading").textContent = sc.contact.heading;
+  document.getElementById("contact-privacy").textContent = sc.contact.privacy;
+  var cf = document.getElementById("contact-fields");
+  sc.contact.fields.forEach(function (f) {
+    var label = el("label", null, f[1]);
+    var input = document.createElement("input");
+    input.name = f[0]; input.required = true; input.maxLength = 100; input.autocomplete = f[2];
+    input.type = f[0] === "email" ? "email" : "text";
+    input.addEventListener("input", function () { contact[f[0]] = input.value; update(); });
+    label.appendChild(input);
+    cf.appendChild(label);
+  });
+  function contactOk() {
+    return ["firstname", "lastname", "company"].every(function (k) { return contact[k] && contact[k].trim(); }) &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((contact.email || "").trim());
+  }
+  function numbersOk() {
+    return sc.domains.every(function (d) {
+      var v = answers[d.number.id];
+      if (v == null || v === "") return true;
+      v = Number(v);
+      return isFinite(v) && v >= 0 && (d.number.kind !== "pct" || v <= 100);
+    });
+  }
+
+  var btn = document.getElementById("see-result");
+  function update() {
+    if (!answers.COUNT) { btn.disabled = true; document.getElementById("progress").textContent = ""; return; }
+    var act = Engine.scRows(bank, sc, answers.COUNT);
+    var done = act.filter(function (id) { return answers[id]; }).length;
+    btn.disabled = done < act.length || !contactOk() || !numbersOk();
+    document.getElementById("progress").textContent = done + " of " + act.length + " answered";
+  }
+  if (answers.COUNT) applyCount();
+  update();
+
+  btn.addEventListener("click", function () {
+    var r = Engine.scoreCard(bank, scale, sc, answers);
+    var body = Engine.scorecardBody(sc, scale, r, answers, resultId, contact,
+      { time: new Date().toISOString(), build: DATA.build, prefilled: prefilled });
+    btn.disabled = true;
+    btn.textContent = "Saving";
+    fetch(HUBSPOT_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (res) { return res.ok; }, function () { return false; })
+      .then(function (saved) {
+        btn.textContent = "See my ScoreCard";
+        update();
+        if (saved) store(function (s) { s.removeItem(DRAFT); });
+        show(r, saved);
+      });
+  });
+
+  function source(b) {
+    var s = el("span", "source");
+    s.appendChild(document.createTextNode(" (" + b.source + ", " + b.date + ", " + b.n.toLocaleString("en-US") + " responses, "));
+    var a = el("a", null, "source");
+    a.href = b.url; a.target = "_blank"; a.rel = "noopener";
+    s.appendChild(a);
+    s.appendChild(document.createTextNode(")"));
+    return s;
+  }
+  function section(out, title) {
+    var s = el("section", "block");
+    if (title) s.appendChild(el("h2", null, title));
+    out.appendChild(s);
+    return s;
+  }
+  function levelText(d) { return d.unknown ? d.label : d.percent + "%, Level " + d.level + ", " + d.label; }
+
+  function show(r, saved) {
+    var out = document.getElementById("result");
+    out.innerHTML = "";
+    if (!saved) out.appendChild(el("p", "save-error", sc.contact.error));
+    var avg = r.average === null ? "" : " (average level " + r.average.toFixed(1) + " of 4.0)";
+
+    // 1. Cover
+    var s1 = section(out);
+    s1.className = "block cover";
+    s1.appendChild(el("h2", null, sc.name + ": " + contact.company.trim()));
+    s1.appendChild(el("p", null, new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })));
+    var t = el("p", "tier");
+    t.appendChild(document.createTextNode("Overall " + sc.level_name.toLowerCase() + ": "));
+    t.appendChild(el("strong", null, r.tier.name));
+    t.appendChild(document.createTextNode(avg));
+    s1.appendChild(t);
+    s1.appendChild(el("p", "neutral-cover", r.neutral));
+
+    // 2. Summary
+    var byKey = {};
+    r.domains.forEach(function (d) { byKey[d.key] = d; });
+    var s2 = section(out, "Summary");
+    s2.appendChild(el("p", null, r.tier.explain));
+    s2.appendChild(el("p", "decision", r.tier.decision));
+    if (r.gaps.length) {
+      s2.appendChild(el("h3", null, "Your " + r.gaps.length + " lowest domains"));
+      var g = el("ol");
+      r.gaps.forEach(function (k) { g.appendChild(el("li", null, byKey[k].name + ": " + levelText(byKey[k]))); });
+      s2.appendChild(g);
+    }
+    s2.appendChild(el("p", "source", sc.level_note));
+
+    // 3. Chart of the 8 levels
+    var s3 = section(out, "Your 8 levels");
+    r.domains.forEach(function (d) {
+      var row = el("div", "domain-row");
+      row.appendChild(el("span", "domain-name", d.key + " " + d.name));
+      var bar = el("span", "bar");
+      bar.setAttribute("aria-hidden", "true");
+      for (var k = 1; k <= 4; k++) bar.appendChild(el("span", d.level && k <= d.level ? "seg on" : "seg"));
+      row.appendChild(bar);
+      row.appendChild(el("span", "domain-label", levelText(d) + (d.notSure ? " · Not sure: " + d.notSure : "")));
+      s3.appendChild(row);
+    });
+
+    // 4. One block per domain: free and new findings together.
+    var s4 = section(out, "Domain by domain");
+    r.domains.forEach(function (d) {
+      var b = el("div", "dblock");
+      b.appendChild(el("h3", null, d.key + " " + d.name));
+      b.appendChild(el("p", null, sc.level_name + ": " + levelText(d)));
+      if (d.subLines) d.subLines.forEach(function (sl) { if (sl[1] !== null) b.appendChild(el("p", "sub", sl[0] + ": " + sl[1] + "%")); });
+      else {
+        if (d.fromFree !== null) b.appendChild(el("p", "sub", "From your free check: " + d.fromFree + "%"));
+        if (d.fromNew !== null) b.appendChild(el("p", "sub", "From the ScoreCard statements: " + d.fromNew + "%"));
+      }
+      if (d.note) b.appendChild(el("p", "note", d.note));
+      if (d.held.length) {
+        b.appendChild(el("p", "sub", "Answered None:"));
+        var ul = el("ul");
+        d.held.forEach(function (h) { ul.appendChild(el("li", null, h)); });
+        b.appendChild(ul);
+      }
+      var m = el("p", "peer", d.main.line);
+      m.appendChild(source(d.main));
+      b.appendChild(m);
+      if (d.placement) b.appendChild(el("p", "placement", d.placement));
+      if (d.context) { var c = el("p", "peer", d.context.line); c.appendChild(source(d.context)); b.appendChild(c); }
+      if (d.number) b.appendChild(el("p", null, "Your number (the Assessment uses it): " + d.number.label + " " + d.number.value));
+      b.appendChild(el("p", null, "Next step: " + d.next_step));
+      s4.appendChild(b);
+    });
+
+    // 5. Find-out list
+    if (r.findOut.length) {
+      var s5 = section(out, "Find out");
+      var fl = el("ul");
+      r.findOut.forEach(function (f) { fl.appendChild(el("li", null, f)); });
+      s5.appendChild(fl);
+    }
+
+    // 6. 90-day plan
+    var s6 = section(out, "Your 90-day plan");
+    var pl = el("ol");
+    r.plan.forEach(function (p) {
+      var li = el("li");
+      li.appendChild(el("strong", null, p.domain + ": "));
+      li.appendChild(document.createTextNode(p.next_step));
+      pl.appendChild(li);
+    });
+    s6.appendChild(pl);
+
+    // 7. What the Assessment measures next
+    var s7 = section(out, "What the Assessment measures next");
+    var al = el("ul");
+    r.plan.filter(function (p) { return p.assess_next; }).forEach(function (p) {
+      var li = el("li");
+      li.appendChild(el("strong", null, p.domain + ": "));
+      li.appendChild(document.createTextNode(p.assess_next));
+      al.appendChild(li);
+    });
+    s7.appendChild(al);
+    s7.appendChild(el("p", "neutral", r.neutral));
+
+    // 8. Sources
+    var s8 = section(out, "Sources");
+    var srcs = el("ul"), seen = {};
+    r.domains.forEach(function (d) {
+      [d.main, d.context].forEach(function (b) {
+        if (!b || seen[b.url]) return;
+        seen[b.url] = true;
+        var li = el("li", null, b.source + ", " + b.date + ", " + b.n.toLocaleString("en-US") + " responses: ");
+        var a = el("a", null, b.url);
+        a.href = b.url; a.target = "_blank"; a.rel = "noopener";
+        li.appendChild(a);
+        srcs.appendChild(li);
+      });
+    });
+    s8.appendChild(srcs);
+
+    var pr = el("button", "print", "Save as PDF");
+    pr.type = "button";
+    pr.addEventListener("click", function () { window.print(); });
+    out.appendChild(pr);
+    document.getElementById("questions").hidden = true;
+    out.hidden = false;
+    out.scrollIntoView({ behavior: "smooth" });
+  }
+})();
+</script>
+</body>
+</html>
